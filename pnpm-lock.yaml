@@ -1,6 +1,8 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@bemedev/core': ^0.0.1
+  '@bemedev/decompose': ^0.1.3
   '@typescript-eslint/eslint-plugin': ^5.37.0
   '@typescript-eslint/parser': ^5.37.0
   esbuild: ^0.15.8
@@ -18,6 +20,12 @@ specifiers:
   typescript: ^4.8.3
   vite: ^3.1.2
   vitest: ^0.23.4
+  zod: ^3.19.1
+
+dependencies:
+  '@bemedev/core': 0.0.1
+  '@bemedev/decompose': 0.1.3
+  zod: 3.19.1
 
 devDependencies:
   '@typescript-eslint/eslint-plugin': 5.37.0_22c5fnooleyfkzrkkgdmel5kmi
@@ -60,6 +68,19 @@ packages:
       chalk: 2.4.2
       js-tokens: 4.0.0
     dev: true
+
+  /@bemedev/core/0.0.1:
+    resolution: {integrity: sha512-BqU9mwXOq4NqcsbGheKlODjlLJ9atpWX9XoM6QrzdvH7gAqFR5NYfx8kMm21tznDxP/XvHwY1Gwc9yfiH6BHIA==}
+    engines: {node: '>=12'}
+    dependencies:
+      dequal: 2.0.3
+      nanoid: 4.0.0
+    dev: false
+
+  /@bemedev/decompose/0.1.3:
+    resolution: {integrity: sha512-OWqy532esAdGQ/4vrPiGSKHHv/+SNdLTAndgl9ltAblJ09k40O51/OXsWogVvAKTX3JJWRiJ+IP1STE085i8RA==}
+    engines: {node: '>=12'}
+    dev: false
 
   /@blakeembrey/deque/1.0.5:
     resolution: {integrity: sha512-6xnwtvp9DY1EINIKdTfvfeAtCYw4OqBZJhtiqkT3ivjnEfa25VQ3TsKvaFfKm8MyGIEfE95qLe+bNEt3nB0Ylg==}
@@ -549,6 +570,11 @@ packages:
   /deep-is/0.1.4:
     resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
     dev: true
+
+  /dequal/2.0.3:
+    resolution: {integrity: sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==}
+    engines: {node: '>=6'}
+    dev: false
 
   /dir-glob/3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
@@ -1278,6 +1304,12 @@ packages:
     hasBin: true
     dev: true
 
+  /nanoid/4.0.0:
+    resolution: {integrity: sha512-IgBP8piMxe/gf73RTQx7hmnhwz0aaEXYakvqZyE302IXW3HyVNhdNGC+O2MwMAVhLEnvXlvKtGbtJf6wvHihCg==}
+    engines: {node: ^14 || ^16 || >=18}
+    hasBin: true
+    dev: false
+
   /natural-compare/1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
@@ -1826,3 +1858,7 @@ packages:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
     dev: true
+
+  /zod/3.19.1:
+    resolution: {integrity: sha512-LYjZsEDhCdYET9ikFu6dVPGp2YH9DegXjdJToSzD9rO6fy4qiRYFoyEYwps88OseJlPyl2NOe2iJuhEhL7IpEA==}
+    dev: false
