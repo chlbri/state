@@ -43,6 +43,7 @@
   "author": "Charles-Lévi BRI <bri_lvi@icloud.com>",
   "license": "MIT",
   "devDependencies": {
+    "@types/lodash.clonedeep": "^4.5.7",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
     "esbuild": "^0.15.8",
@@ -64,6 +65,7 @@
   "dependencies": {
     "@bemedev/core": "^0.0.1",
     "@bemedev/decompose": "^0.1.3",
+    "lodash.clonedeep": "^4.5.0",
     "zod": "^3.19.1"
   }
 }

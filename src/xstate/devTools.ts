@@ -6,9 +6,7 @@ type ServiceListener = (service: AnyInterpreter) => void;
 export interface XStateDevInterface {
   register: (service: AnyInterpreter) => void;
   unregister: (service: AnyInterpreter) => void;
-  onRegister: (
-    listener: ServiceListener
-  ) => {
+  onRegister: (listener: ServiceListener) => {
     unsubscribe: () => void;
   };
   services: Set<AnyInterpreter>;
@@ -30,7 +28,7 @@ export function getGlobal(): typeof globalThis | undefined {
   }
   if (!IS_PRODUCTION) {
     console.warn(
-      'XState could not find a global object in this environment. Please let the maintainers know and raise an issue here: https://github.com/statelyai/xstate/issues'
+      'XState could not find a global object in this environment. Please let the maintainers know and raise an issue here: https://github.com/statelyai/xstate/issues',
     );
   }
 }

@@ -12,7 +12,7 @@ import {
   Typestate,
   ActorRef,
   StateMachine,
-  SimpleEventsOf
+  SimpleEventsOf,
 } from './types';
 import { EMPTY_ACTIVITY_MAP } from './constants';
 import { matchesState, isString, warn } from './utils';
@@ -25,7 +25,7 @@ import { BaseActionObject, Prop } from './types';
 
 export function stateValuesEqual(
   a: StateValue | undefined,
-  b: StateValue | undefined
+  b: StateValue | undefined,
 ): boolean {
   if (a === b) {
     return true;
@@ -44,12 +44,12 @@ export function stateValuesEqual(
 
   return (
     aKeys.length === bKeys.length &&
-    aKeys.every((key) => stateValuesEqual(a[key], b[key]))
+    aKeys.every(key => stateValuesEqual(a[key], b[key]))
   );
 }
 
 export function isStateConfig<TContext, TEvent extends EventObject>(
-  state: any
+  state: any,
 ): state is StateConfig<TContext, TEvent> {
   if (typeof state !== 'object' || state === null) {
     return false;
@@ -65,7 +65,7 @@ export const isState = isStateConfig;
 
 export function bindActionToState<TC, TE extends EventObject>(
   action: ActionObject<TC, TE>,
-  state: State<TC, TE, any, any, any>
+  state: State<TC, TE, any, any, any>,
 ): ActionObject<TC, TE> {
   const { exec } = action;
   const boundAction: ActionObject<TC, TE> = {
@@ -76,9 +76,9 @@ export function bindActionToState<TC, TE extends EventObject>(
             exec(state.context, state.event as TE, {
               action,
               state,
-              _event: state._event
+              _event: state._event,
             })
-        : undefined
+        : undefined,
   };
 
   return boundAction;
@@ -88,8 +88,11 @@ export class State<
   TContext,
   TEvent extends EventObject = EventObject,
   TStateSchema extends StateSchema<TContext> = any,
-  TTypestate extends Typestate<TContext> = { value: any; context: TContext },
-  TResolvedTypesMeta = TypegenDisabled
+  TTypestate extends Typestate<TContext> = {
+    value: any;
+    context: TContext;
+  },
+  TResolvedTypesMeta = TypegenDisabled,
 > {
   public value: StateValue;
   public context: TContext;
@@ -157,7 +160,7 @@ export class State<
    */
   public static from<TC, TE extends EventObject = EventObject>(
     stateValue: State<TC, TE, any, any, any> | StateValue,
-    context?: TC | undefined
+    context?: TC | undefined,
   ): State<TC, TE, any, any, any> {
     if (stateValue instanceof State) {
       if (stateValue.context !== context) {
@@ -174,7 +177,7 @@ export class State<
           events: [],
           configuration: [], // TODO: fix,
           transitions: [],
-          children: {}
+          children: {},
         });
       }
 
@@ -196,7 +199,7 @@ export class State<
       events: [],
       configuration: [],
       transitions: [],
-      children: {}
+      children: {},
     });
   }
   /**
@@ -204,7 +207,7 @@ export class State<
    * @param config The state config
    */
   public static create<TC, TE extends EventObject = EventObject>(
-    config: StateConfig<TC, TE>
+    config: StateConfig<TC, TE>,
   ): State<TC, TE, any, any, any> {
     return new State(config);
   }
@@ -215,7 +218,7 @@ export class State<
    */
   public static inert<TC, TE extends EventObject = EventObject>(
     stateValue: State<TC, TE, any, any, any> | StateValue,
-    context: TC
+    context: TC,
   ): State<TC, TE> {
     if (stateValue instanceof State) {
       if (!stateValue.actions.length) {
@@ -233,7 +236,7 @@ export class State<
         activities: stateValue.activities,
         configuration: stateValue.configuration,
         transitions: [],
-        children: {}
+        children: {},
       });
     }
 
@@ -278,7 +281,7 @@ export class State<
     Object.defineProperty(this, 'nextEvents', {
       get: () => {
         return nextEvents(this.configuration);
-      }
+      },
     });
   }
 
@@ -289,7 +292,7 @@ export class State<
    */
   public toStrings(
     stateValue: StateValue = this.value,
-    delimiter: string = '.'
+    delimiter: string = '.',
   ): string[] {
     if (isString(stateValue)) {
       return [stateValue];
@@ -297,16 +300,17 @@ export class State<
     const valueKeys = Object.keys(stateValue);
 
     return valueKeys.concat(
-      ...valueKeys.map((key) =>
+      ...valueKeys.map(key =>
         this.toStrings(stateValue[key], delimiter).map(
-          (s) => key + delimiter + s
-        )
-      )
+          s => key + delimiter + s,
+        ),
+      ),
     );
   }
 
   public toJSON() {
-    const { configuration, transitions, tags, machine, ...jsonValues } = this;
+    const { configuration, transitions, tags, machine, ...jsonValues } =
+      this;
 
     return { ...jsonValues, tags: Array.from(tags) };
   }
@@ -318,14 +322,14 @@ export class State<
   public matches<
     TSV extends TResolvedTypesMeta extends TypegenEnabled
       ? Prop<Prop<TResolvedTypesMeta, 'resolved'>, 'matchesStates'>
-      : never
+      : never,
   >(parentStateValue: TSV): boolean;
   public matches<
     TSV extends TResolvedTypesMeta extends TypegenDisabled
       ? TTypestate['value']
-      : never
+      : never,
   >(
-    parentStateValue: TSV
+    parentStateValue: TSV,
   ): this is State<
     (TTypestate extends any
       ? { value: TSV; context: any } extends TTypestate
@@ -348,7 +352,7 @@ export class State<
   public hasTag(
     tag: TResolvedTypesMeta extends TypegenEnabled
       ? Prop<Prop<TResolvedTypesMeta, 'resolved'>, 'tags'>
-      : string
+      : string,
   ): boolean {
     return this.tags.has(tag as string);
   }
@@ -365,7 +369,7 @@ export class State<
     if (IS_PRODUCTION) {
       warn(
         !!this.machine,
-        `state.can(...) used outside of a machine-created State object; this will always return false.`
+        `state.can(...) used outside of a machine-created State object; this will always return false.`,
       );
     }
 
@@ -375,7 +379,7 @@ export class State<
       !!transitionData?.transitions.length &&
       // Check that at least one transition is not forbidden
       transitionData.transitions.some(
-        (t) => t.target !== undefined || t.actions.length
+        t => t.target !== undefined || t.actions.length,
       )
     );
   }

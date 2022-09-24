@@ -14,9 +14,9 @@ export interface EventData<D = any> extends EventObject {
   data: D;
 }
 
-export interface EventError<E extends Error = Error> extends EventObject {
+export interface EventError extends EventObject {
   type: NExtract<EventType, 'state_manager.event.catch'>;
-  error: E;
+  error: Error;
 }
 
 export interface EventEmit<D = any> extends EventObject {

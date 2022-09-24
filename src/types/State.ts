@@ -1,15 +1,23 @@
-import { StateValue } from '@bemedev/decompose';
+import cloneDeep from 'lodash.clonedeep';
+import { DEFAULT_TYPES } from '../constants/objects';
+import { isArray, isSingle } from '../helpers';
 import type { EventEmit } from './Event';
-import { Props } from './Props';
-import type { Transition } from './Transition';
-import type { BaseType, DefaultTypes } from './_default';
+import type { Out } from './Out';
+import type { PropsWithValue } from './Props';
+import type { TransitionConfig } from './TransitionConfig';
+import type { BaseType, DefaultTypes, SingleOrArray } from './_default';
 
-export type StateProps<TC extends object, PTC extends object> = {
-  context: TC;
-  privateContext: PTC;
-  value: string;
-  id: string;
-};
+export type DefaultStateType = DefaultTypes['state'];
+
+export interface StateProps<
+  TC extends object,
+  TE extends EventEmit,
+  PTC extends object,
+> extends BaseType {
+  _id: string;
+  id?: string;
+  transitionConfigs?: SingleOrArray<TransitionConfig<TC, TE, PTC>>;
+}
 
 export class State<
   TC extends object,
@@ -17,19 +25,59 @@ export class State<
   PTC extends object,
 > implements BaseType
 {
-  description?: string;
-  type: DefaultTypes['state'] = 'state_manager.state';
-  id?: string;
-  transitionConfigs?: Transition<TC, TE, PTC>[];
-
-  get value() {
-    return this._value;
+  get description() {
+    return this.props.description;
   }
 
-  constructor(private _value: StateValue) {}
+  get _id() {
+    return this.props._id;
+  }
 
-  async send(props: Props<TC, TE, PTC>) {
-    //TODO: Send Events
+  get id() {
+    return this.props.id;
+  }
 
+  get type() {
+    return DEFAULT_TYPES.state;
+  }
+
+  constructor(private props: StateProps<TC, TE, PTC>) {}
+
+  async send({
+    value,
+    context,
+    event,
+    privateContext,
+  }: PropsWithValue<TC, TE, PTC>) {
+    let props: Out<TC, PTC> = cloneDeep({ context, privateContext });
+
+    const transitions = this.props.transitionConfigs;
+
+    if (isSingle(transitions)) {
+      if (transitions.check(event)) {
+        props = transitions.execute({
+          value,
+          context,
+          event,
+          privateContext,
+        });
+      }
+    }
+
+    if (isArray(transitions)) {
+      for (const transition of transitions) {
+        if (transition.check(event)) {
+          props = transition.execute({
+            value,
+            event,
+            context,
+            privateContext,
+          });
+          break;
+        }
+      }
+    }
+
+    return props;
   }
 }

@@ -7,7 +7,7 @@ import {
   Values,
   IsAny,
   ServiceMap,
-  Cast
+  Cast,
 } from './types';
 
 export interface TypegenDisabled {
@@ -103,16 +103,14 @@ export type AreAllImplementationsAssumedToBeProvided<
   TMissingImplementations = Prop<
     Prop<TResolvedTypesMeta, 'resolved'>,
     'missingImplementations'
-  >
+  >,
 > = IsAny<TResolvedTypesMeta> extends true
   ? true
   : TResolvedTypesMeta extends TypegenEnabled
   ? IsNever<
-      Values<
-        {
-          [K in keyof TMissingImplementations]: TMissingImplementations[K];
-        }
-      >
+      Values<{
+        [K in keyof TMissingImplementations]: TMissingImplementations[K];
+      }>
     > extends true
     ? true
     : false
@@ -129,13 +127,14 @@ interface AllImplementationsProvided {
 
 export interface MarkAllImplementationsAsProvided<TResolvedTypesMeta> {
   '@@xstate/typegen': Prop<TResolvedTypesMeta, '@@xstate/typegen'>;
-  resolved: Prop<TResolvedTypesMeta, 'resolved'> & AllImplementationsProvided;
+  resolved: Prop<TResolvedTypesMeta, 'resolved'> &
+    AllImplementationsProvided;
 }
 
 type GenerateServiceEvent<
   TServiceName,
   TEventType,
-  TServiceMap extends ServiceMap
+  TServiceMap extends ServiceMap,
 > = TEventType extends any
   ? {
       type: TEventType;
@@ -144,7 +143,7 @@ type GenerateServiceEvent<
 
 type GenerateServiceEvents<
   TServiceMap extends ServiceMap,
-  TInvokeSrcNameMap
+  TInvokeSrcNameMap,
 > = string extends keyof TServiceMap
   ? never
   : Cast<
@@ -160,10 +159,14 @@ type GenerateServiceEvents<
 
 // we don't even have to do that much here, technically, because `T & unknown` is equivalent to `T`
 // however, this doesn't display nicely in IDE tooltips, so let's fix this
-type MergeWithInternalEvents<TIndexedEvents, TInternalEvents> = TIndexedEvents &
-  // alternatively we could consider using key remapping in mapped types for this in the future
-  // in theory it would be a single iteration rather than two
-  Pick<TInternalEvents, Exclude<keyof TInternalEvents, keyof TIndexedEvents>>;
+type MergeWithInternalEvents<TIndexedEvents, TInternalEvents> =
+  TIndexedEvents &
+    // alternatively we could consider using key remapping in mapped types for this in the future
+    // in theory it would be a single iteration rather than two
+    Pick<
+      TInternalEvents,
+      Exclude<keyof TInternalEvents, keyof TIndexedEvents>
+    >;
 
 type AllowAllEvents = {
   eventsCausingActions: Record<string, string>;
@@ -176,7 +179,7 @@ export interface ResolveTypegenMeta<
   TTypesMeta extends TypegenConstraint,
   TEvent extends EventObject,
   TAction extends BaseActionObject,
-  TServiceMap extends ServiceMap
+  TServiceMap extends ServiceMap,
 > {
   '@@xstate/typegen': TTypesMeta['@@xstate/typegen'];
   resolved: {

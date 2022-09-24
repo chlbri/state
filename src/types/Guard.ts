@@ -51,10 +51,17 @@ export type Guards<
   | GuardsAnd<TC, TE, PTC>
   | SingleOrArray<Guard<TC, TE, PTC>>;
 
-type Guard_JSON = string | { id: string; description?: string };
+type Guard_JSON = { id: string; description?: string };
+
+export type GuardsOr_JSON = {
+  or: (Guard_JSON | GuardsOr_JSON | GuardsAnd_JSON)[];
+};
+
+export type GuardsAnd_JSON = {
+  and: (Guard_JSON | GuardsOr_JSON | GuardsAnd_JSON)[];
+};
 
 export type Guards_JSON =
   | SingleOrArray<Guard_JSON>
-  | { and: Guard_JSON[] | Guards_JSON }
-  | { or: Guard_JSON[] | Guards_JSON };
-
+  | GuardsAnd_JSON
+  | GuardsOr_JSON;

@@ -5,20 +5,20 @@ import type {
   EventObject,
   BaseActionObject,
   Prop,
-  IsNever
+  IsNever,
 } from './types';
 import { mapValues } from './utils';
 import {
   UnionFromCreatorsReturnTypes,
   FinalModelCreators,
   Model,
-  ModelCreators
+  ModelCreators,
 } from './model.types';
 
 export function createModel<
   TContext,
   TEvent extends EventObject,
-  TAction extends BaseActionObject = BaseActionObject
+  TAction extends BaseActionObject = BaseActionObject,
 >(initialContext: TContext): Model<TContext, TEvent, TAction, void>;
 export function createModel<
   TContext,
@@ -29,10 +29,10 @@ export function createModel<
   >,
   TComputedAction = UnionFromCreatorsReturnTypes<
     Prop<TFinalModelCreators, 'actions'>
-  >
+  >,
 >(
   initialContext: TContext,
-  creators: TModelCreators
+  creators: TModelCreators,
 ): Model<
   TContext,
   Cast<TComputedEvent, EventObject>,
@@ -43,7 +43,7 @@ export function createModel<
 >;
 export function createModel(
   initialContext: object,
-  creators?: ModelCreators<any>
+  creators?: ModelCreators<any>,
 ): unknown {
   const eventCreators = creators?.events;
   const actionCreators = creators?.actions;
@@ -54,22 +54,28 @@ export function createModel(
     events: (eventCreators
       ? mapValues(eventCreators, (fn, eventType) => (...args: any[]) => ({
           ...fn(...args),
-          type: eventType
+          type: eventType,
         }))
       : undefined) as any,
     actions: actionCreators
-      ? mapValues(actionCreators, (fn, actionType) => (...args: any[]) => ({
-          ...fn(...args),
-          type: actionType
-        }))
+      ? mapValues(
+          actionCreators,
+          (fn, actionType) =>
+            (...args: any[]) => ({
+              ...fn(...args),
+              type: actionType,
+            }),
+        )
       : undefined,
     reset: () => assign(initialContext),
     createMachine: (config, implementations) => {
       return createMachine(
-        'context' in config ? config : { ...config, context: initialContext },
-        implementations
+        'context' in config
+          ? config
+          : { ...config, context: initialContext },
+        implementations,
       );
-    }
+    },
   };
 
   return model;

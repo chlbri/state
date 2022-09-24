@@ -10,32 +10,35 @@ import {
   PropertyAssigner,
   StateMachine,
   InternalMachineOptions,
-  ServiceMap
+  ServiceMap,
 } from './types';
 import {
   ResolveTypegenMeta,
   TypegenConstraint,
-  TypegenDisabled
+  TypegenDisabled,
 } from './typegenTypes';
 
 // real `ExtractEvent` breaks `model.assign` inference within transition actions
 type SimplisticExtractEvent<
   TEvent extends EventObject,
-  TEventType extends TEvent['type']
+  TEventType extends TEvent['type'],
 > = TEvent extends { type: TEventType } ? TEvent : never;
 
 export interface Model<
   TContext,
   TEvent extends EventObject,
   TAction extends BaseActionObject = BaseActionObject,
-  TModelCreators = void
+  TModelCreators = void,
 > {
   initialContext: TContext;
   assign: <TEventType extends TEvent['type'] = TEvent['type']>(
     assigner:
       | Assigner<TContext, SimplisticExtractEvent<TEvent, TEventType>>
-      | PropertyAssigner<TContext, SimplisticExtractEvent<TEvent, TEventType>>,
-    eventType?: TEventType
+      | PropertyAssigner<
+          TContext,
+          SimplisticExtractEvent<TEvent, TEventType>
+        >,
+    eventType?: TEventType,
   ) => AssignAction<TContext, SimplisticExtractEvent<TEvent, TEventType>>;
   events: Prop<TModelCreators, 'events'>;
   actions: Prop<TModelCreators, 'actions'>;
@@ -43,7 +46,7 @@ export interface Model<
   createMachine: {
     <
       TServiceMap extends ServiceMap = ServiceMap,
-      TTypesMeta extends TypegenConstraint = TypegenDisabled
+      TTypesMeta extends TypegenConstraint = TypegenDisabled,
     >(
       config: MachineConfig<
         TContext,
@@ -57,7 +60,7 @@ export interface Model<
         TContext,
         TEvent,
         ResolveTypegenMeta<TTypesMeta, TEvent, TAction, TServiceMap>
-      >
+      >,
     ): StateMachine<
       TContext,
       any,
@@ -70,21 +73,21 @@ export interface Model<
   };
 }
 
-export type ModelContextFrom<
-  TModel extends Model<any, any, any, any>
-> = TModel extends Model<infer TContext, any, any, any> ? TContext : never;
+export type ModelContextFrom<TModel extends Model<any, any, any, any>> =
+  TModel extends Model<infer TContext, any, any, any> ? TContext : never;
 
 export type ModelEventsFrom<
-  TModel extends Model<any, any, any, any> | undefined
-> = TModel extends Model<any, infer TEvent, any, any> ? TEvent : EventObject;
+  TModel extends Model<any, any, any, any> | undefined,
+> = TModel extends Model<any, infer TEvent, any, any>
+  ? TEvent
+  : EventObject;
 
-export type ModelActionsFrom<
-  TModel extends Model<any, any, any, any>
-> = TModel extends Model<any, any, infer TAction, any> ? TAction : never;
+export type ModelActionsFrom<TModel extends Model<any, any, any, any>> =
+  TModel extends Model<any, any, infer TAction, any> ? TAction : never;
 
 export type EventCreator<
   Self extends AnyFunction,
-  Return = ReturnType<Self>
+  Return = ReturnType<Self>,
 > = Return extends object
   ? Return extends {
       type: any;
@@ -109,7 +112,7 @@ export type FinalEventCreators<Self> = {
 
 export type ActionCreator<
   Self extends AnyFunction,
-  Return = ReturnType<Self>
+  Return = ReturnType<Self>,
 > = Return extends object
   ? Return extends {
       type: any;

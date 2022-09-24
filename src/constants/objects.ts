@@ -5,4 +5,5 @@ export const DEFAULT_TYPES = {
   service: 'state_manager.service',
   state: 'state_manager.state',
   transition: 'state_manager.transition',
+  transitionConfig: 'state_manager.transition_config',
 } as const;

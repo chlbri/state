@@ -3,7 +3,7 @@ interface SchedulerOptions {
 }
 
 const defaultOptions: SchedulerOptions = {
-  deferEvents: false
+  deferEvents: false,
 };
 
 export class Scheduler {
@@ -41,7 +41,7 @@ export class Scheduler {
 
     if (this.queue.length !== 0) {
       throw new Error(
-        'Event queue should be empty when it is not processing events'
+        'Event queue should be empty when it is not processing events',
       );
     }
 

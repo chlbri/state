@@ -26,7 +26,7 @@ export class SimulatedClock implements SimulatedClock {
     this.timeouts.set(id, {
       start: this.now(),
       timeout,
-      fn
+      fn,
     });
     return id;
   }

@@ -3,13 +3,13 @@ import { EventObject, SingleOrArray, ActionObject } from './types';
 export function each<TContext, TEvent extends EventObject>(
   collection: keyof TContext,
   item: keyof TContext,
-  actions: SingleOrArray<ActionObject<TContext, TEvent>>
+  actions: SingleOrArray<ActionObject<TContext, TEvent>>,
 ): ActionObject<TContext, TEvent>;
 export function each<TContext, TEvent extends EventObject>(
   collection: keyof TContext,
   item: keyof TContext,
   index: keyof TContext,
-  actions: SingleOrArray<ActionObject<TContext, TEvent>>
+  actions: SingleOrArray<ActionObject<TContext, TEvent>>,
 ): ActionObject<TContext, TEvent>;
 export function each<TContext, TEvent extends EventObject>(
   collection: keyof TContext,
@@ -17,7 +17,7 @@ export function each<TContext, TEvent extends EventObject>(
   indexOrActions:
     | keyof TContext
     | SingleOrArray<ActionObject<TContext, TEvent>>,
-  maybeActions?: SingleOrArray<ActionObject<TContext, TEvent>>
+  maybeActions?: SingleOrArray<ActionObject<TContext, TEvent>>,
 ): ActionObject<TContext, TEvent> {
   const actions = maybeActions || indexOrActions;
   const index = maybeActions ? indexOrActions : undefined;
@@ -27,6 +27,6 @@ export function each<TContext, TEvent extends EventObject>(
     collection,
     item,
     index,
-    actions
+    actions,
   };
 }

@@ -3,11 +3,11 @@ import {
   EventObject,
   InvokeConfig,
   InvokeDefinition,
-  InvokeSourceDefinition
+  InvokeSourceDefinition,
 } from './types';
 
 export function toInvokeSource(
-  src: string | InvokeSourceDefinition
+  src: string | InvokeSourceDefinition,
 ): InvokeSourceDefinition {
   if (typeof src === 'string') {
     const simpleSrc = { type: src };
@@ -22,7 +22,7 @@ export function toInvokeDefinition<TContext, TEvent extends EventObject>(
   invokeConfig: InvokeConfig<TContext, TEvent> & {
     src: string | InvokeSourceDefinition;
     id: string;
-  }
+  },
 ): InvokeDefinition<TContext, TEvent> {
   return {
     type: actionTypes.invoke,
@@ -32,8 +32,8 @@ export function toInvokeDefinition<TContext, TEvent extends EventObject>(
       return {
         ...invokeDef,
         type: actionTypes.invoke,
-        src: toInvokeSource(invokeConfig.src)
+        src: toInvokeSource(invokeConfig.src),
       };
-    }
+    },
   };
 }

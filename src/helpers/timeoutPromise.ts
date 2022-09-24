@@ -10,5 +10,5 @@ export function timeoutPromise<T extends (...args: any[]) => Promise<any>>(
   const out = (...args: Parameters<T>) => {
     return Promise.race([_timeout, promise(...args)]);
   };
-  return out;
+  return out as T;
 }

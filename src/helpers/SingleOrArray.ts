@@ -6,6 +6,8 @@ export function isArray<T>(
   return !!value && Array.isArray(value);
 }
 
-export function isSingle<T>(value: SingleOrArray<T>): value is Exclude<T, undefined> {
+export function isSingle<T>(
+  value: SingleOrArray<T>,
+): value is Exclude<T, undefined> {
   return !!value && !Array.isArray(value);
 }
