@@ -2,7 +2,7 @@ import type { NOmit } from '@bemedev/core';
 import cloneDeep from 'lodash.clonedeep';
 import { DEFAULT_TYPES } from '../constants/objects';
 import { isSingle } from '../helpers';
-import { compareEvents } from '../helpers/Event';
+import { compareEvents } from '../helpers/Events';
 import type { EventEmit } from './Event';
 import type { Out } from './Out';
 import type { PropsWithValue } from './Props';

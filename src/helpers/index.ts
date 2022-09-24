@@ -1,4 +1,4 @@
-export * from './Event';
+export * from './Events';
 export * from './functions';
 export * from './Guards';
 export * from './matches';
