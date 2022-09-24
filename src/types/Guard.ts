@@ -18,17 +18,37 @@ export interface Guard<
   predicate: GuardPredicate<TC, TE, PTC>;
 }
 
+export type GuardsOr<
+  TC extends object,
+  TE extends EventObject,
+  PTC extends object,
+> = {
+  or: (
+    | Guard<TC, TE, PTC>
+    | GuardsOr<TC, TE, PTC>
+    | GuardsAnd<TC, TE, PTC>
+  )[];
+};
+
+export type GuardsAnd<
+  TC extends object,
+  TE extends EventObject,
+  PTC extends object,
+> = {
+  and: (
+    | Guard<TC, TE, PTC>
+    | GuardsOr<TC, TE, PTC>
+    | GuardsAnd<TC, TE, PTC>
+  )[];
+};
+
 export type Guards<
   TC extends object,
   TE extends EventObject,
   PTC extends object,
 > =
-  | {
-      or: Guard<TC, TE, PTC>[] | Guards<TC, TE, PTC>;
-    }
-  | {
-      and: Guard<TC, TE, PTC>[] | Guards<TC, TE, PTC>;
-    }
+  | GuardsOr<TC, TE, PTC>
+  | GuardsAnd<TC, TE, PTC>
   | SingleOrArray<Guard<TC, TE, PTC>>;
 
 type Guard_JSON = string | { id: string; description?: string };
@@ -38,4 +58,3 @@ export type Guards_JSON =
   | { and: Guard_JSON[] | Guards_JSON }
   | { or: Guard_JSON[] | Guards_JSON };
 
-//TODO: Reduce Guards

@@ -15,6 +15,7 @@ export interface Transition<
 > extends BaseType {
   type: TransitionType;
   guards?: Guards<TC, TE, PTC>;
+  in?: SingleOrArray<string>;
   actions?: Action<TC, TE, PTC>[];
   target?: string;
 }
