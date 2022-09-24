@@ -15,7 +15,7 @@ export interface TransitionConfigProps<
   TC extends object,
   TE extends EventEmit,
   PTC extends object,
-> extends NOmit<BaseType, 'type'> {
+> extends NOmit<BaseType, 'libraryType'> {
   event: TE;
   transitions: SingleOrArray<Transition<TC, TE, PTC>>;
 }
@@ -26,7 +26,7 @@ export class TransitionConfig<
   PTC extends object,
 > implements BaseType
 {
-  get type() {
+  get libraryType() {
     return DEFAULT_TYPES.transitionConfig;
   }
 

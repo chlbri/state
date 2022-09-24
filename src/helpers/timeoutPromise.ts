@@ -1,14 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-export function timeoutPromise<T extends (...args: any[]) => Promise<any>>(
+export function timeoutPromise<F extends (...args: any[]) => Promise<any>>(
   timeout: number,
-  promise: (...args: any[]) => Promise<any>,
+  promise: F,
 ) {
   const _timeout = Promise.reject(
     new Error(`Promise timed out after ${timeout} ms`),
   );
-  const out = (...args: Parameters<T>) => {
+  
+  const out = (...args: Parameters<F>) => {
     return Promise.race([_timeout, promise(...args)]);
   };
-  return out as T;
+  return out as F;
 }

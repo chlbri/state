@@ -1,9 +1,14 @@
 import type { NExtract, NOmit } from '@bemedev/core';
-import { timeoutPromise } from '../helpers';
+import { cloneFunction, timeoutPromise } from '../helpers';
 import type { EventData, EventEmit, EventError } from './Event';
 import type { Props } from './Props';
-import type { Transition, Transition_JSON } from './Transition';
-import type { BaseType, DefaultTypes, SingleOrArray } from './_default';
+import type { Transition } from './Transition';
+import type {
+  BaseType,
+  DefaultTypes,
+  SingleOrArray,
+  WithString,
+} from './_default';
 
 type Types = 'promise' | 'subscribable';
 export type ServiceType = `${DefaultTypes['service']}.${Types}`;
@@ -30,7 +35,7 @@ export interface ServicePromiseProps<
   TE extends EventEmit,
   PTC extends object,
   R extends Promise<any> = Promise<any>,
-> extends NOmit<BaseType, 'type'> {
+> extends NOmit<BaseType, 'libraryType'> {
   timeout: number;
   exec: (props?: Props<TC, TE, PTC>) => R;
   then: SingleOrArray<Transition<TC, EventData<Awaited<R>>, PTC>>;
@@ -63,23 +68,18 @@ export class ServicePromise<
     return this.props.catch;
   }
 
-  finally = this.props.finally;
+  readonly finally: typeof this.props.finally;
 
   description?: string;
 
   constructor(private props: ServicePromiseProps<TC, TE, PTC, R>) {
+    // TODO: verify if it's needed to clone for all functions here
     this.exec = timeoutPromise(props.timeout, props.exec);
+    this.finally = cloneFunction(props.finally);
   }
 }
 
-export type Service_JSON =
-  | string
-  | {
-      id: string;
-      description?: string;
-      then: SingleOrArray<Transition_JSON>;
-      catch: SingleOrArray<Transition_JSON>;
-      finally?: string;
-    };
-
-//TODO: Separate Subscribable from promise
+export type Service_JSON = WithString<{
+  id: string;
+  description?: string;
+}>;

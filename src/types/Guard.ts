@@ -1,6 +1,11 @@
 import type { EventObject } from './Event';
 import type { Props } from './Props';
-import type { BaseType, DefaultTypes, SingleOrArray } from './_default';
+import type {
+  BaseType,
+  DefaultTypes,
+  SingleOrArray,
+  WithString,
+} from './_default';
 
 export type GuardPredicate<
   TC extends object,
@@ -13,7 +18,7 @@ export interface Guard<
   TE extends EventObject,
   PTC extends object,
 > extends BaseType {
-  type: DefaultTypes['guard'];
+  libraryType: DefaultTypes['guard'];
   name: string;
   predicate: GuardPredicate<TC, TE, PTC>;
 }
@@ -51,7 +56,7 @@ export type Guards<
   | GuardsAnd<TC, TE, PTC>
   | SingleOrArray<Guard<TC, TE, PTC>>;
 
-type Guard_JSON = { id: string; description?: string };
+type Guard_JSON = WithString<{ id: string; description?: string }>;
 
 export type GuardsOr_JSON = {
   or: (Guard_JSON | GuardsOr_JSON | GuardsAnd_JSON)[];

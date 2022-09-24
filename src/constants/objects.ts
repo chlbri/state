@@ -4,6 +4,7 @@ export const DEFAULT_TYPES = {
   guard: 'state_manager.guard',
   service: 'state_manager.service',
   state: 'state_manager.state',
+  node: 'state_manager.node',
   transition: 'state_manager.transition',
   transitionConfig: 'state_manager.transition_config',
 } as const;

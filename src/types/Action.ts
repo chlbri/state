@@ -1,7 +1,7 @@
 import type { EventObject } from './Event';
 import type { Out } from './Out';
 import type { Props } from './Props';
-import type { BaseType, DefaultTypes } from './_default';
+import type { BaseType, DefaultTypes, WithString } from './_default';
 
 type Types = 'void' | 'assign' | 'start';
 
@@ -21,7 +21,7 @@ export interface ActionProps<
   PTC extends object,
 > extends BaseType {
   id: string;
-  type: ActionTypes;
+  libraryType: ActionTypes;
   exec: ActionFunction<TC, TE, PTC>;
 }
 
@@ -31,8 +31,8 @@ export class Action<
   PTC extends object,
 > implements BaseType
 {
-  get type() {
-    return this.props.type;
+  get libraryType() {
+    return this.props.libraryType;
   }
 
   get id() {
@@ -47,7 +47,7 @@ export class Action<
   constructor(private props: ActionProps<TC, TE, PTC>) {}
 }
 
-export type Action_JSON = {
+export type Action_JSON = WithString<{
   id: string;
   description?: string;
-};
+}>;

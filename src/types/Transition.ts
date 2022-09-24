@@ -9,14 +9,19 @@ import type { EventObject } from './Event';
 import type { Guards, Guards_JSON } from './Guard';
 import type { Out } from './Out';
 import type { Props, PropsWithValue } from './Props';
-import type { BaseType, DefaultTypes, SingleOrArray } from './_default';
+import type {
+  BaseType,
+  DefaultTypes,
+  SingleOrArray,
+  WithString,
+} from './_default';
 
 export interface TransitionProps<
   TC extends object,
   TE extends EventObject,
   PTC extends object,
 > extends BaseType {
-  type: DefaultTypes['transition'];
+  libraryType: DefaultTypes['transition'];
   guards?: Guards<TC, TE, PTC>;
   in?: SingleOrArray<string>;
   actions?: Action<TC, TE, PTC>[];
@@ -29,7 +34,7 @@ export class Transition<
   PTC extends object,
 > implements BaseType
 {
-  get type() {
+  get libraryType() {
     return DEFAULT_TYPES.transition;
   }
 
@@ -103,10 +108,16 @@ export class Transition<
   }
 }
 
-export type Transition_JSON = {
-  description?: string;
-  guards?: Guards_JSON;
-  in?: SingleOrArray<string>;
-  actions?: SingleOrArray<Action_JSON>;
-  target?: string;
-};
+/**
+ * type <string> for target
+ * type <string[]> for actions
+ */
+export type Transition_JSON =
+  | string[]
+  | WithString<{
+      description?: string;
+      guards?: Guards_JSON;
+      in?: SingleOrArray<string>;
+      actions?: SingleOrArray<Action_JSON>;
+      target?: string;
+    }>;
