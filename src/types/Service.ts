@@ -29,8 +29,8 @@ export interface Subscribable<T> {
 
 export interface ServiceProps<
   TC extends object,
+  TE extends EventEmit,
   PTC extends object,
-  EV = unknown,
   T extends ServiceType = PromT,
   R extends Promise<any> = Promise<any>,
   D = unknown,
@@ -39,22 +39,22 @@ export interface ServiceProps<
   type: T;
   timeout: number;
   exec: (
-    props?: Props<TC, EventEmit<EV>, PTC>,
-  ) => T extends PromT ? R : Subscribable<EventEmit<EV>>;
+    props?: Props<TC, TE, PTC>,
+  ) => T extends PromT ? R : Subscribable<TE>;
   then: SingleOrArray<Transition<TC, EventData<D>, PTC>>;
   catch: SingleOrArray<Transition<TC, EventError<E>, PTC>>;
-  finally?: (props?: Props<TC, EventEmit<EV>, PTC>) => void;
+  finally?: (props?: Props<TC, TE, PTC>) => void;
 }
 
 export class Service<
   TC extends object,
+  TE extends EventEmit,
   PTC extends object,
-  EV = unknown,
   T extends ServiceType = PromT,
   R extends Promise<any> = Promise<any>,
   D = unknown,
   E extends Error = Error,
-> implements ServiceProps<TC, PTC, EV, T, R, D, E>
+> implements ServiceProps<TC, TE, PTC, T, R, D, E>
 {
   get type() {
     return this.props.type;
@@ -64,9 +64,7 @@ export class Service<
     return this.props.timeout;
   }
 
-  exec: (
-    props?: Props<TC, EventEmit<EV>, PTC>,
-  ) => T extends PromT ? R : Subscribable<EventEmit<EV>>;
+  exec: typeof this.props.exec;
 
   get then() {
     return this.props.then;
@@ -80,7 +78,7 @@ export class Service<
 
   description?: string;
 
-  constructor(private props: ServiceProps<TC, PTC, EV, T, R, D, E>) {
+  constructor(private props: ServiceProps<TC, TE, PTC, T, R, D, E>) {
     if (props.type === promT) {
       this.exec = timeoutPromise(props.timeout, props.exec as any) as any;
     } else {
@@ -98,3 +96,5 @@ export type Service_JSON =
       catch: SingleOrArray<Transition_JSON>;
       finally?: string;
     };
+
+//TODO: Separate Subecribable from promise

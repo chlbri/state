@@ -1,6 +1,6 @@
-import { decompose, StateValue } from '@bemedev/decompose';
-import { isSingle } from '../helpers';
+import { StateValue } from '@bemedev/decompose';
 import type { EventEmit } from './Event';
+import { Props } from './Props';
 import type { Transition } from './Transition';
 import type { BaseType, DefaultTypes } from './_default';
 
@@ -20,33 +20,16 @@ export class State<
   description?: string;
   type: DefaultTypes['state'] = 'state_manager.state';
   id?: string;
-  transitions?: Transition<TC, TE, PTC>[];
+  transitionConfigs?: Transition<TC, TE, PTC>[];
 
   get value() {
     return this._value;
   }
 
-  private get decomposeds() {
-    return decompose(this._value);
-  }
-
   constructor(private _value: StateValue) {}
 
-  async executeTransition() {
-    if (!this.transitions) {
-      return;
-    }
-    this.transitions.forEach(transition => {
-      let executeThis = true;
-      const _in = transition.in;
-      if (_in) {
-        if (isSingle(_in)) {
-          executeThis = this.decomposeds.includes(_in);
-        } else {
-          executeThis = _in.every(__in => this.decomposeds.includes(__in));
-        }
-      }
-      if (!executeThis) return;
-    });
+  async send(props: Props<TC, TE, PTC>) {
+    //TODO: Send Events
+
   }
 }
