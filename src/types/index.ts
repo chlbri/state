@@ -1,6 +1,7 @@
 export * from './Action';
 export * from './Event';
 export * from './Guard';
+export * from './helpers';
 export * from './Out';
 export * from './Props';
 export * from './Service';

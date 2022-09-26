@@ -8,7 +8,7 @@
 
 #### TODO: Design Parallel States
 
-#### TODO: Allow to change definitions in service, and on send
+#### TODO: Allow to change definitions in service,
 
 #### TODO: Allow endpoints for test to catch the internet calls
 

@@ -1,14 +1,10 @@
 import type { NExtract, NOmit } from '@bemedev/core';
 import { cloneFunction, timeoutPromise } from '../helpers';
+import { Action_JSON } from './Action';
 import type { EventData, EventEmit, EventError } from './Event';
 import type { Props } from './Props';
-import type { Transition } from './Transition';
-import type {
-  BaseType,
-  DefaultTypes,
-  SingleOrArray,
-  WithString,
-} from './_default';
+import type { Transition, Transition_JSON } from './Transition';
+import type { BaseType, DefaultTypes, SingleOrArray } from './_default';
 
 type Types = 'promise' | 'subscribable';
 export type ServiceType = `${DefaultTypes['service']}.${Types}`;
@@ -79,7 +75,10 @@ export class ServicePromise<
   }
 }
 
-export type Service_JSON = WithString<{
-  id: string;
+export type ServicePromise_JSON = {
+  src: string;
   description?: string;
-}>;
+  then: SingleOrArray<Transition_JSON>;
+  catch: SingleOrArray<Transition_JSON>;
+  finally?: SingleOrArray<Action_JSON>;
+};

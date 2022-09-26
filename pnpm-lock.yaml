@@ -44,7 +44,7 @@ devDependencies:
   rollup-plugin-dts: 4.2.2_5q64ijqsuisqe52alrh6v6njki
   rollup-plugin-esbuild: 4.10.1_x5xzcocanie7kx5dltzpnaarrm
   rollup-plugin-terser: 7.0.2_rollup@2.79.1
-  rxjs: 7.5.6
+  rxjs: 7.5.7
   tslib: 2.4.0
   typescript: 4.8.3
   vite: 3.1.3
@@ -243,8 +243,8 @@ packages:
     resolution: {integrity: sha512-evMDG1bC4rgQg4ku9tKpuMh5iBNEwNa3tf9zRHdP1qlv+1WUg44xat4IxCE14gIpZRGUUWAx2VhItCZc25NfMA==}
     dev: true
 
-  /@types/node/18.7.20:
-    resolution: {integrity: sha512-adzY4vLLr5Uivmx8+zfSJ5fbdgKxX8UMtjtl+17n0B1q1Nz8JEmE151vefMdpD+1gyh+77weN4qEhej/O7budQ==}
+  /@types/node/18.7.21:
+    resolution: {integrity: sha512-rLFzK5bhM0YPyCoTC8bolBjMk7bwnZ8qeZUBslBfjZQou2ssJdWslx9CZ8DGM+Dx7QXQiiTVZ/6QO6kwtHkZCA==}
     dev: true
 
   /@typescript-eslint/eslint-plugin/5.38.0_4gkcvl6qsi23tqqawfqgcwtp54:
@@ -1180,7 +1180,7 @@ packages:
     resolution: {integrity: sha512-KWYVV1c4i+jbMpaBC+U++4Va0cp8OisU185o73T1vo99hqi7w8tSJfUXYswwqqrjzwxa6KpRK54WhPvwf5w6PQ==}
     engines: {node: '>= 10.13.0'}
     dependencies:
-      '@types/node': 18.7.20
+      '@types/node': 18.7.21
       merge-stream: 2.0.0
       supports-color: 7.2.0
     dev: true
@@ -1574,8 +1574,8 @@ packages:
       queue-microtask: 1.2.3
     dev: true
 
-  /rxjs/7.5.6:
-    resolution: {integrity: sha512-dnyv2/YsXhnm461G+R/Pe5bWP41Nm6LBXEYWI6eiFP4fiwx6WRI/CD0zbdVAudd9xwLEF2IDcKXLHit0FYjUzw==}
+  /rxjs/7.5.7:
+    resolution: {integrity: sha512-z9MzKh/UcOqB3i20H6rtrlaE/CgjLOvheWK/9ILrbhROGTweAi1BaFsTT9FbwZi5Trr1qNRs+MXkhmR06awzQA==}
     dependencies:
       tslib: 2.4.0
     dev: true
@@ -1812,7 +1812,7 @@ packages:
     dependencies:
       '@types/chai': 4.3.3
       '@types/chai-subset': 1.3.3
-      '@types/node': 18.7.20
+      '@types/node': 18.7.21
       chai: 4.3.6
       debug: 4.3.4
       local-pkg: 0.4.2

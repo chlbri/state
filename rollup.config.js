@@ -11,7 +11,7 @@ const bundle = config => ({
   external: id => !/^[./]/.test(id),
 });
 
-export default [
+module.exports = [
   bundle({
     plugins: [esbuild(), terser()],
     output: [

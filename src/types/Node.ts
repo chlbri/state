@@ -5,14 +5,38 @@ import { BaseType, DefaultTypes } from './_default';
 
 export type DefaultNodeType = DefaultTypes['node'];
 
-export interface NodeProps extends NOmit<BaseType, 'libraryType'> {
+export type NodeProps = {
   parentId?: string;
   _id: string;
   id?: string;
   children?: NodeProps[];
+  description?: string;
+  type?: 'atomic' | 'compound' | 'parallel';
+  initial?: string;
   delimiter?: string;
-  // TODO: Define the Discriminated Union for Node
-}
+  // TODO: Add the Promise Discriminated Union
+} & (
+  | {
+      type: 'parallel';
+      initial?: undefined;
+      children: NodeProps[];
+      // promise?: undefined;
+    }
+  | {
+      type?: 'compound';
+      initial: string;
+      children: NodeProps[];
+      // promise?: undefined;
+    }
+  | {
+      type?: 'atomic';
+      initial?: undefined;
+      children?: undefined;
+      // promise?: undefined;
+    }
+) &
+  // | { type?: 'promise'; initial?: undefined; promise: ServicePromise_JSON }
+  NOmit<BaseType, 'libraryType'>;
 
 export class Node implements BaseType {
   get libraryType() {
@@ -33,7 +57,5 @@ export class Node implements BaseType {
       : `${this.parentId}${this.delimiter}${this.props._id}`;
   }
 
-  constructor(private props: NodeProps) {
-    // TODO:  Add a zod schema verification (id must not contains "#")
-  }
+  constructor(private props: NodeProps) {}
 }

@@ -43,8 +43,10 @@ export class Action<
     return this.props.description;
   }
 
-  readonly exec = this.props.exec;
-  constructor(private props: ActionProps<TC, TE, PTC>) {}
+  readonly exec: typeof this.props.exec;
+  constructor(private props: ActionProps<TC, TE, PTC>) {
+    this.exec = props.exec;
+  }
 }
 
 export type Action_JSON = WithString<{
