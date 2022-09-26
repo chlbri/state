@@ -11,5 +11,3 @@
 #### TODO: Allow to change definitions in service,
 
 #### TODO: Allow endpoints for test to catch the internet calls
-
-#### TODO: coerxe data function, get last value which is not undefined
