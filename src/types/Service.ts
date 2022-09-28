@@ -1,15 +1,12 @@
-import type { NExtract, NOmit } from '@bemedev/core';
+import { NExtract, NOmit } from '@bemedev/core';
 import { Action_JSON } from './Action';
-import type { EventEmit, EventObject } from './Event';
-import type { Props } from './Props';
+import type { EventObject } from './Event';
+import { AsyncFunctionEvent } from './Functions';
 import type { Transition_JSON } from './Transition';
 import type { BaseType, DefaultTypes, SingleOrArray } from './_default';
 
 type Types = 'promise' | 'subscribable';
 export type ServiceType = `${DefaultTypes['service']}.${Types}`;
-
-type PromT = NExtract<ServiceType, 'state_manager.service.promise'>;
-const promT: PromT = 'state_manager.service.promise';
 
 export interface Observer<T> {
   next: (value: T) => void;
@@ -27,17 +24,26 @@ export interface Subscribable<T> {
 
 export interface ServicePromise<
   TC extends object = object,
-  TE extends EventEmit = EventEmit,
+  TE extends EventObject = EventObject,
   PTC extends object = object,
-  PTE extends EventObject = EventObject,
-  R = any,
-> extends NOmit<BaseType, 'libraryType'> {
+> extends BaseType {
+  libraryType: NExtract<ServiceType, 'state_manager.service.promise'>;
   id: string;
   timeout: number;
-  exec: (props?: Props<TC, TE, PTC, PTE>) => Promise<R>;
+  exec: AsyncFunctionEvent<TC, TE, PTC>;
   then: Transition_JSON;
   catch: Transition_JSON;
   finally?: string[];
+}
+
+export function createPromise<
+  TC extends object = object,
+  TE extends EventObject = EventObject,
+  PTC extends object = object,
+>(
+  props: NOmit<ServicePromise<TC, TE, PTC>, 'libraryType'>,
+): ServicePromise<TC, TE, PTC> {
+  return { ...props, libraryType: 'state_manager.service.promise' };
 }
 
 export type ServicePromise_JSON = {

@@ -1,56 +1,53 @@
+import { DEFAULT_TYPES } from '../constants/objects';
 import type { EventObject } from './Event';
-import type { Out } from './Out';
 import type { Props } from './Props';
-import type { BaseType, DefaultTypes, WithString } from './_default';
+import type { BaseType, WithString } from './_default';
 
-type Types = 'void' | 'assign' | 'start';
+export const ACTIONS_TYPES = {
+  void: `${DEFAULT_TYPES.action}.void`,
+  assign: `${DEFAULT_TYPES.action}.assign`,
+  start: `${DEFAULT_TYPES.action}.start`,
+} as const;
 
-export type ActionTypes = `${DefaultTypes['action']}.${Types}`;
+type Types = keyof typeof ACTIONS_TYPES;
+
+export type ActionTypes = typeof ACTIONS_TYPES[Types];
+
+export type Out<TC extends object, PTC extends object> = {
+  context?: TC;
+  privateContext?: PTC;
+  target?: string;
+};
 
 export type ActionFunction<
   TC extends object,
   TE extends EventObject,
   PTC extends object = object,
-  PTE extends EventObject = EventObject,
 > = {
-  bivarianceHack(props?: Props<TC, TE, PTC, PTE>): Out<TC, PTC>;
+  bivarianceHack(props?: Props<TC, TE, PTC>): Out<TC, PTC>;
 }['bivarianceHack'];
 
-export interface ActionProps<
+export interface Action<
   TC extends object = object,
   TE extends EventObject = EventObject,
   PTC extends object = object,
-  PTE extends EventObject = EventObject,
 > extends BaseType {
   id: string;
   libraryType: ActionTypes;
-  exec: ActionFunction<TC, TE, PTC, PTE>;
+  exec: ActionFunction<TC, TE, PTC>;
 }
 
-export class Action<
+function assign<
   TC extends object = object,
   TE extends EventObject = EventObject,
   PTC extends object = object,
-  PTE extends EventObject = EventObject,
-> implements BaseType
-{
-  get libraryType() {
-    return this.props.libraryType;
-  }
-
-  get id() {
-    return this.props.id;
-  }
-
-  get description() {
-    return this.props.description;
-  }
-
-  readonly exec: typeof this.props.exec;
-  constructor(private props: ActionProps<TC, TE, PTC, PTE>) {
-    this.exec = props.exec;
-  }
+>(assigner: ActionFunction<TC, TE, PTC>) {
+  return { exec: assigner, libraryType: ACTIONS_TYPES.assign };
 }
+
+export const Actions = {
+  assign,
+};
 
 export type Action_JSON = WithString<{
   id: string;

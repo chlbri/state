@@ -2,22 +2,19 @@ import type { StateValue } from '@bemedev/decompose';
 import type { EventObject } from './Event';
 
 export type Props<
-  TC extends object,
-  TE extends EventObject,
+  TC extends object = object,
+  TE extends EventObject = EventObject,
   PTC extends object = object,
-  PTE extends EventObject = EventObject,
 > = {
   context?: TC;
   event?: TE;
-  privateEvent?: PTE;
   privateContext?: PTC;
 };
 
 export type PropsWithValue<
-  TC extends object,
-  TE extends EventObject,
+  TC extends object = object,
+  TE extends EventObject = EventObject,
   PTC extends object = object,
-  PTE extends EventObject = EventObject,
-> = Props<TC, TE, PTC, PTE> & {
+> = Props<TC, TE, PTC> & {
   value: StateValue;
 };

@@ -1,28 +1,39 @@
 import { NOmit } from '@bemedev/core';
-import cloneDeep from 'lodash.clonedeep';
 import { DEFAULT_TYPES } from '../constants/objects';
 import { createError } from '../helpers/Errors';
 import { getLastDefined } from '../helpers/getLastDefined';
 import { Action } from './Action';
-import type { EventEmit, EventObject } from './Event';
-import { Guard } from './Guard';
-import { ServicePromise } from './Service';
+import type { EventObject } from './Event';
+import { createGuard, GuardPredicate } from './Guard';
+import { createPromise, ServicePromise } from './Service';
 import type { BaseType, DefaultTypes } from './_default';
 
 export type DefaultStateType = DefaultTypes['state'];
 
+export type Schema<
+  TC extends object = object,
+  TE extends EventObject = EventObject,
+  PTC extends object = object,
+> = {
+  guards: Record<string, GuardPredicate<TC, TE, PTC>>;
+  actions: Record<string, NOmit<Action<TC, TE, PTC>, 'id'>>;
+  promises: Record<
+    string,
+    NOmit<ServicePromise<TC, TE, PTC>, 'id' | 'libraryType'>
+  >;
+};
+
 export interface StateProps<
   TC extends object = object,
-  TE extends EventEmit = EventEmit,
+  TE extends EventObject = EventObject,
   PTC extends object = object,
-  PTE extends EventObject = EventObject,
-  R extends PTE = PTE,
-> {
+  S extends Schema<TC, TE, PTC> = Schema<TC, TE, PTC>,
+> extends NOmit<BaseType, 'libraryType'> {
   _id: string;
   id?: string;
-  guards: Guard<TC, TE, PTC, PTE>[];
-  actions: Action<TC, TE, PTC, PTE>[];
-  promises: ServicePromise<TC, TE, PTC, PTE, R>[];
+  guards: S['guards'];
+  actions: S['actions'];
+  promises: S['promises'];
   values: string[];
 }
 
@@ -35,11 +46,10 @@ const ERRORS = {
 
 export class State<
   TC extends object = object,
-  TE extends EventEmit = EventEmit,
+  TE extends EventObject = EventObject,
   PTC extends object = object,
-  PTE extends EventObject = EventObject,
-  R extends PTE = PTE,
-> implements NOmit<BaseType, 'description'>
+  S extends Schema<TC, TE, PTC> = Schema<TC, TE, PTC>,
+> implements BaseType
 {
   static get ERRORS() {
     return ERRORS;
@@ -52,25 +62,44 @@ export class State<
   get id() {
     return getLastDefined(this.props.id, this.props._id);
   }
-  //TODO: create a function diminution
-  //TODO: Create the state machine and manage all
 
-  private readonly props: StateProps<TC, TE, PTC, PTE, R>;
-
-  constructor(props: StateProps<TC, TE, PTC, PTE, R>) {
-    this.props = cloneDeep(props);
+  get description() {
+    return this.props.description;
   }
+
+  private get guards() {
+    const _guards = Object.entries(this.props.guards ?? {});
+    return _guards.map(([id, predicate]) =>
+      createGuard({ id, predicate }),
+    );
+  }
+
+  private get actions(): Action<TC, TE, PTC>[] {
+    const _actions = Object.entries(this.props.actions ?? {});
+    return _actions.map(([id, action]) => {
+      return { id, ...action };
+    });
+  }
+
+  private get promises() {
+    const _promises = Object.entries(this.props.promises ?? {});
+    return _promises.map(([id, promise]) => {
+      return createPromise({ ...promise, id });
+    });
+  }
+
+  constructor(private props: StateProps<TC, TE, PTC, S>) {}
 
   getGuard(searchId?: string) {
     if (!searchId) throw State.ERRORS.id;
-    const guard = this.props.guards.find(guard => guard.id === searchId);
+    const guard = this.guards.find(({ id }) => id === searchId);
     if (!guard) throw State.ERRORS.guard;
     return guard;
   }
 
   getAction(searchId?: string) {
     if (!searchId) throw State.ERRORS.id;
-    const action = this.props.actions.find(guard => guard.id === searchId);
+    const action = this.actions.find(({ id }) => id === searchId);
     if (!action) throw State.ERRORS.action;
     return action;
   }
@@ -84,9 +113,7 @@ export class State<
 
   getPromise(searchId?: string) {
     if (!searchId) throw State.ERRORS.id;
-    const promise = this.props.promises.find(
-      promise => promise.id === searchId,
-    );
+    const promise = this.promises.find(({ id }) => id === searchId);
     if (!promise) throw State.ERRORS.promise;
     return promise;
   }

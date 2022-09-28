@@ -2,15 +2,13 @@ import { EventObject } from './Event';
 import { Props } from './Props';
 
 export type FunctionMachine<
-  TC extends object,
-  TE extends EventObject,
+  TC extends object = object,
+  TE extends EventObject = EventObject,
   PTC extends object = object,
-  PTE extends EventObject = EventObject,
-> = (props?: Props<TC, TE, PTC, PTE>) => any;
+> = (props?: Props<TC, TE, PTC>) => any;
 
 export type AsyncFunctionEvent<
-  TC extends object,
-  TE extends EventObject,
+  TC extends object = object,
+  TE extends EventObject = EventObject,
   PTC extends object = object,
-  PTE extends EventObject = EventObject,
-> = (props?: Props<TC, TE, PTC, PTE>) => Promise<any>;
+> = (props?: Props<TC, TE, PTC>) => Promise<any>;

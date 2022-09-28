@@ -17,7 +17,7 @@ import {
   reduceGuards,
 } from '../helpers';
 import { transitionTargetSchema } from '../helpers/typeChecking/Transtions';
-import { EventEmit, EventError, EventObject, Events } from './Event';
+import { EventObject } from './Event';
 import { Guards, GuardsOption, Guards_JSON } from './Guard';
 import { Out } from './Out';
 import { Props } from './Props';
@@ -26,15 +26,14 @@ import { Transition_JSON } from './Transition';
 
 export interface MachineProps<
   TC extends object = object,
-  TE extends EventEmit = EventEmit,
+  TE extends EventObject = EventObject,
   PTC extends object = object,
-  PTE extends EventObject = EventObject,
-  R extends PTE = PTE,
+  R = any,
 > {
   id?: string;
   context: TC;
   privateContext: PTC;
-  states: State<TC, TE, PTC, PTE, R>[];
+  states: State<TC, TE, PTC, R>[];
   values: string[];
 }
 
@@ -54,10 +53,9 @@ const ERRORS = {
 
 export class Machine<
   TC extends object = object,
-  TE extends EventEmit = EventEmit,
+  TE extends EventObject = EventObject,
   PTC extends object = object,
-  PTE extends EventEmit = EventEmit,
-  R extends PTE = PTE,
+  R = any,
 > {
   static get ERRORS() {
     return ERRORS;
@@ -69,21 +67,21 @@ export class Machine<
     return getLastDefined(this.props.id, this._id);
   }
 
-  private _currentState: State<TC, TE, PTC, PTE, R>;
+  private _currentState: State<TC, TE, PTC, R>;
 
-  constructor(private props: MachineProps<TC, TE, PTC, PTE, R>) {
+  constructor(private props: MachineProps<TC, TE, PTC, R>) {
     const _state = props.states.find(state => state.id === '/');
     if (!_state) throw Machine.ERRORS.master;
     this._currentState = _state;
   }
 
   private constructProps(
-    events?: Events<TE, PTE>,
-  ): Props<TC, TE, PTC, PTE> {
+    event?: EventObject,
+  ): Props<TC, EventObject, PTC> {
     return {
       context: this.props.context,
       privateContext: this.props.privateContext,
-      ...events,
+      event,
     };
   }
 
@@ -97,14 +95,14 @@ export class Machine<
     return _state;
   };
 
-  performAction(searchActionId?: string, events?: Events<TE, PTE>) {
+  performAction(searchActionId?: string, event?: EventObject) {
     const action = this._currentState.getAction(searchActionId);
-    const props = this.constructProps(events);
+    const props = this.constructProps(event);
     return action.exec(props);
   }
 
   // #region GUARDS
-  private createGuards(guards?: Guards_JSON): Guards<TC, TE, PTC, PTE> {
+  private createGuards(guards?: Guards_JSON): Guards<TC, TE, PTC> {
     if (!guards) throw Machine.ERRORS.id;
     const simple = guardJSONschema.safeParse(guards);
     if (simple.success) {
@@ -116,7 +114,7 @@ export class Machine<
       const out = {
         or: or.data.or.map(guard =>
           this.createGuards(guard),
-        ) as GuardsOption<TC, TE, PTC, PTE>[],
+        ) as GuardsOption<TC, TE, PTC>[],
       };
       return out;
     }
@@ -126,7 +124,7 @@ export class Machine<
       const out = {
         and: and.data.and.map(guard =>
           this.createGuards(guard),
-        ) as GuardsOption<TC, TE, PTC, PTE>[],
+        ) as GuardsOption<TC, TE, PTC>[],
       };
       return out;
     }
@@ -134,20 +132,17 @@ export class Machine<
     throw Machine.ERRORS.id;
   }
 
-  performGuards(
-    guards?: Guards<TC, TE, PTC, PTE>,
-    events?: Events<TE, PTE>,
-  ) {
+  performGuards(guards?: Guards<TC, TE, PTC>, event?: TE) {
     if (!guards) throw Machine.ERRORS.id;
     const reducedGuard = reduceGuards(guards);
-    const props = this.constructProps(events);
+    const props = this.constructProps(event);
     return reducedGuard(props);
   }
   // #endregion
 
   private performPromiseTransition(
     transition?: Transition_JSON,
-    events?: Events<TE, PTE>,
+    event?: EventObject,
   ): Out<TC, PTC> {
     if (!transition) throw Machine.ERRORS.id;
     let out: Out<TC, PTC> = {
@@ -162,7 +157,7 @@ export class Machine<
     const _actions = transitionActionsSchema.safeParse(transition);
     if (_actions.success) {
       for (const action of _actions.data) {
-        out = this.performAction(action, events);
+        out = this.performAction(action, event);
       }
       return out;
     }
@@ -178,7 +173,7 @@ export class Machine<
       if (guards) {
         const _guards = this.createGuards(guards);
         const guard = reduceGuards(_guards);
-        const noCheck = !guard(this.constructProps(events));
+        const noCheck = !guard(this.constructProps(event));
         if (noCheck) {
           return out;
         }
@@ -189,13 +184,13 @@ export class Machine<
           for (const action of actions) {
             const simple = actionSimpleSchema.safeParse(action);
             if (simple.success) {
-              out = this.performAction(simple.data, events);
+              out = this.performAction(simple.data, event);
               out.target = target;
               return out;
             } else {
               const complex = actionComplexSchema.safeParse(action);
               if (complex.success) {
-                out = this.performAction(complex.data.id, events);
+                out = this.performAction(complex.data.id, event);
                 out.target = target;
                 return out;
               }
@@ -204,13 +199,13 @@ export class Machine<
         } else {
           const simple = actionSimpleSchema.safeParse(actions);
           if (simple.success) {
-            out = this.performAction(simple.data, events);
+            out = this.performAction(simple.data, event);
             out.target = target;
             return out;
           } else {
             const complex = actionComplexSchema.safeParse(actions);
             if (complex.success) {
-              out = this.performAction(complex.data.id, events);
+              out = this.performAction(complex.data.id, event);
               out.target = target;
               return out;
             }
@@ -221,32 +216,26 @@ export class Machine<
     throw Machine.ERRORS.transition;
   }
 
-  async performPromise(
-    searchPromiseId?: string,
-    events?: Events<TE, PTE>,
-  ) {
+  async performPromise(searchPromiseId?: string, event?: TE) {
     const promise = this._currentState.getPromise(searchPromiseId);
-    const props = this.constructProps(events);
+    const props = this.constructProps(event);
     const _then = promise.then;
     const _catch = promise.catch;
     const _finally = promise.finally;
 
     try {
-      const data = await promise.exec(props);
-      this.performPromiseTransition(_then, { privateEvent: data });
+      const data = (await promise.exec(props)) as any;
+      this.performPromiseTransition(_then, data);
     } catch (err: any) {
       const libraryType = `${DEFAULT_TYPES.event}.catch` as const;
       const error = err && err instanceof Error ? err : new Error();
-      const privateEvent: EventError = { libraryType, error };
-
-      this.performPromiseTransition(_catch, {
-        privateEvent: privateEvent as unknown as PTE,
-      });
+      const event = { libraryType, error, event: libraryType } as any;
+      this.performPromiseTransition(_catch, event);
     } finally {
       if (_finally) {
         for (const funcStr of _finally) {
           const action = this._currentState.getAction(funcStr);
-          action.exec(this.constructProps(events));
+          action.exec(this.constructProps(event));
         }
       }
     }
