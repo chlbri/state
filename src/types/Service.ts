@@ -1,9 +1,8 @@
 import type { NExtract, NOmit } from '@bemedev/core';
-import { cloneFunction, timeoutPromise } from '../helpers';
 import { Action_JSON } from './Action';
-import type { EventData, EventEmit, EventError } from './Event';
+import type { EventEmit, EventObject } from './Event';
 import type { Props } from './Props';
-import type { Transition, Transition_JSON } from './Transition';
+import type { Transition_JSON } from './Transition';
 import type { BaseType, DefaultTypes, SingleOrArray } from './_default';
 
 type Types = 'promise' | 'subscribable';
@@ -26,51 +25,19 @@ export interface Subscribable<T> {
   subscribe(observer: Observer<T>): Subscription;
 }
 
-export interface ServicePromiseProps<
+export interface ServicePromise<
   TC extends object = object,
   TE extends EventEmit = EventEmit,
   PTC extends object = object,
-  PTE extends EventEmit = EventEmit,
+  PTE extends EventObject = EventObject,
   R = any,
 > extends NOmit<BaseType, 'libraryType'> {
   id: string;
   timeout: number;
-  exec: (props?: Props<TC, TE, PTC>) => Promise<R>;
-  then: SingleOrArray<Transition<TC, EventData<Awaited<R>>, PTC>>;
-  catch: SingleOrArray<Transition<TC, EventError, PTC>>;
-  finally?: (props?: Props<TC, TE, PTC>) => void;
-}
-
-export class ServicePromise<
-  TC extends object = object,
-  TE extends EventEmit = EventEmit,
-  PTC extends object = object,
-  PTE extends EventEmit = EventEmit,
-  R = any,
-> {
-  get type() {
-    return promT;
-  }
-
-  get id() {
-    return this.props.id;
-  }
-
-  get timeout() {
-    return this.props.timeout;
-  }
-
-  readonly exec: typeof this.props.exec;
-
-  readonly finally: typeof this.props.finally;
-
-  description?: string;
-
-  constructor(private props: ServicePromiseProps<TC, TE, PTC, PTE, R>) {
-    // TODO: verify if it's needed to clone for all functions here
-    this.exec = timeoutPromise(props.timeout, props.exec);
-    this.finally = cloneFunction(props.finally);
-  }
+  exec: (props?: Props<TC, TE, PTC, PTE>) => Promise<R>;
+  then: Transition_JSON;
+  catch: Transition_JSON;
+  finally?: string[];
 }
 
 export type ServicePromise_JSON = {

@@ -7,13 +7,14 @@ import { isGuardAnd, isGuardOr, isSimpleGuard } from './typeChecking';
  * @returns A guard
  */
 export function reduceGuardsOr<
-  TC extends object,
-  TE extends EventObject,
-  PTC extends object,
+  TC extends object = object,
+  TE extends EventObject = EventObject,
+  PTC extends object = object,
+  PTE extends EventObject = EventObject,
 >(
-  ...predicates: GuardPredicate<TC, TE, PTC>[]
-): GuardPredicate<TC, TE, PTC> {
-  const out = (props?: Props<TC, TE, PTC>) => {
+  ...predicates: GuardPredicate<TC, TE, PTC, PTE>[]
+): GuardPredicate<TC, TE, PTC, PTE> {
+  const out = (props?: Props<TC, TE, PTC, PTE>) => {
     const results = predicates.map(predicate => predicate(props));
     return results.some(result => result === true);
   };
@@ -26,11 +27,12 @@ export function reduceGuardsOr<
  * @returns A guard
  */
 export function reduceGuardsAnd<
-  TC extends object,
-  TE extends EventObject,
-  PTC extends object,
->(...predicates: GuardPredicate<TC, TE, PTC>[]) {
-  const out = (props?: Props<TC, TE, PTC>) => {
+  TC extends object = object,
+  TE extends EventObject = EventObject,
+  PTC extends object = object,
+  PTE extends EventObject = EventObject,
+>(...predicates: GuardPredicate<TC, TE, PTC, PTE>[]) {
+  const out = (props?: Props<TC, TE, PTC, PTE>) => {
     const results = predicates.map(predicate => predicate(props));
     return results.every(result => result === true);
   };
@@ -43,10 +45,11 @@ export function reduceGuardsAnd<
  * @returns A guard
  */
 export function reduceGuards<
-  TC extends object,
-  TE extends EventObject,
-  PTC extends object,
->(guards: Guards<TC, TE, PTC>): GuardPredicate<TC, TE, PTC> {
+  TC extends object = object,
+  TE extends EventObject = EventObject,
+  PTC extends object = object,
+  PTE extends EventObject = EventObject,
+>(guards: Guards<TC, TE, PTC, PTE>): GuardPredicate<TC, TE, PTC, PTE> {
   if (isSimpleGuard(guards)) {
     return guards.predicate;
   } else if (isGuardOr(guards)) {

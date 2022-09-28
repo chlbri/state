@@ -4,15 +4,11 @@ type CreateErrorProps = {
   cause?: string;
 };
 
-export function createError({
-  code,
-  message,
-  cause,
-}: CreateErrorProps): never {
+export function createError({ code, message, cause }: CreateErrorProps) {
   const error = new Error(message);
   error.name = code;
   error.cause = cause;
-  throw error;
+  return error;
 }
 
 export function createWarning({ code, message, cause }: CreateErrorProps) {

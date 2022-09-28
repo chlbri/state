@@ -2,7 +2,7 @@ import {
   atomicNodeSchema,
   compoundNodeSchema,
   parallelNodeSchema,
-} from './Node';
+} from './Nodes';
 
 describe.concurrent('isParallel', () => {
   const safeParallel = (value: any) => {

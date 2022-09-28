@@ -10,8 +10,12 @@ describe.concurrent('createError', () => {
     const code = 'one';
     const message = 'a error';
     const cause = 'cause';
-    const actual = () => createError({ code, message, cause });
-    expect(actual).toThrowError(message);
+    const actual = createError({ code, message, cause });
+    expect(actual).toBeDefined();
+    expect(actual).toBeInstanceOf(Error);
+    expect(actual.message).toBe(message);
+    expect(actual.name).toBe(code);
+    expect(actual.cause).toBe(cause);
   });
 });
 

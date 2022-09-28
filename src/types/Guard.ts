@@ -14,15 +14,6 @@ export type GuardPredicate<
   PTE extends EventObject = EventObject,
 > = (props?: Props<TC, TE, PTC, PTE>) => boolean;
 
-interface _Guard<
-  TC extends object,
-  TE extends EventObject,
-  PTC extends object = object,
-  PTE extends EventObject = EventObject,
-> {
-  predicate: GuardPredicate<TC, TE, PTC, PTE>;
-}
-
 export interface Guard<
   TC extends object,
   TE extends EventObject,
@@ -41,7 +32,7 @@ export type GuardsOr<
   PTE extends EventObject = EventObject,
 > = {
   or: (
-    | _Guard<TC, TE, PTC, PTE>
+    | Guard<TC, TE, PTC, PTE>
     | GuardsOr<TC, TE, PTC, PTE>
     | GuardsAnd<TC, TE, PTC, PTE>
   )[];
@@ -54,11 +45,21 @@ export type GuardsAnd<
   PTE extends EventObject = EventObject,
 > = {
   and: (
-    | _Guard<TC, TE, PTC, PTE>
+    | Guard<TC, TE, PTC, PTE>
     | GuardsOr<TC, TE, PTC, PTE>
     | GuardsAnd<TC, TE, PTC, PTE>
   )[];
 };
+
+export type GuardsOption<
+  TC extends object,
+  TE extends EventObject,
+  PTC extends object = object,
+  PTE extends EventObject = EventObject,
+> =
+  | Guard<TC, TE, PTC, PTE>
+  | GuardsOr<TC, TE, PTC, PTE>
+  | GuardsAnd<TC, TE, PTC, PTE>;
 
 export type Guards<
   TC extends object,
@@ -66,10 +67,7 @@ export type Guards<
   PTC extends object = object,
   PTE extends EventObject = EventObject,
 > =
-  | ({
-      libraryType: DefaultTypes['guard'];
-      id: string;
-    } & (GuardsOr<TC, TE, PTC, PTE> | GuardsAnd<TC, TE, PTC, PTE>))
+  | (GuardsOr<TC, TE, PTC, PTE> | GuardsAnd<TC, TE, PTC, PTE>)
   | SingleOrArray<Guard<TC, TE, PTC, PTE>>;
 
 type Guard_JSON = WithString<{ id: string; description?: string }>;
