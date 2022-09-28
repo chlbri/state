@@ -27,27 +27,33 @@ export interface Subscribable<T> {
 }
 
 export interface ServicePromiseProps<
-  TC extends object,
-  TE extends EventEmit,
-  PTC extends object,
-  R extends Promise<any> = Promise<any>,
+  TC extends object = object,
+  TE extends EventEmit = EventEmit,
+  PTC extends object = object,
+  PTE extends EventEmit = EventEmit,
+  R = any,
 > extends NOmit<BaseType, 'libraryType'> {
+  id: string;
   timeout: number;
-  exec: (props?: Props<TC, TE, PTC>) => R;
+  exec: (props?: Props<TC, TE, PTC>) => Promise<R>;
   then: SingleOrArray<Transition<TC, EventData<Awaited<R>>, PTC>>;
   catch: SingleOrArray<Transition<TC, EventError, PTC>>;
   finally?: (props?: Props<TC, TE, PTC>) => void;
 }
 
 export class ServicePromise<
-  TC extends object,
-  TE extends EventEmit,
-  PTC extends object,
-  R extends Promise<any> = Promise<any>,
-> implements ServicePromiseProps<TC, TE, PTC, R>
-{
+  TC extends object = object,
+  TE extends EventEmit = EventEmit,
+  PTC extends object = object,
+  PTE extends EventEmit = EventEmit,
+  R = any,
+> {
   get type() {
     return promT;
+  }
+
+  get id() {
+    return this.props.id;
   }
 
   get timeout() {
@@ -56,19 +62,11 @@ export class ServicePromise<
 
   readonly exec: typeof this.props.exec;
 
-  get then() {
-    return this.props.then;
-  }
-
-  get catch() {
-    return this.props.catch;
-  }
-
   readonly finally: typeof this.props.finally;
 
   description?: string;
 
-  constructor(private props: ServicePromiseProps<TC, TE, PTC, R>) {
+  constructor(private props: ServicePromiseProps<TC, TE, PTC, PTE, R>) {
     // TODO: verify if it's needed to clone for all functions here
     this.exec = timeoutPromise(props.timeout, props.exec);
     this.finally = cloneFunction(props.finally);

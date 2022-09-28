@@ -10,51 +10,67 @@ import type {
 export type GuardPredicate<
   TC extends object,
   TE extends EventObject,
-  PTC extends object,
-> = (props?: Props<TC, TE, PTC>) => boolean;
+  PTC extends object = object,
+  PTE extends EventObject = EventObject,
+> = (props?: Props<TC, TE, PTC, PTE>) => boolean;
+
+interface _Guard<
+  TC extends object,
+  TE extends EventObject,
+  PTC extends object = object,
+  PTE extends EventObject = EventObject,
+> {
+  predicate: GuardPredicate<TC, TE, PTC, PTE>;
+}
 
 export interface Guard<
   TC extends object,
   TE extends EventObject,
-  PTC extends object,
+  PTC extends object = object,
+  PTE extends EventObject = EventObject,
 > extends BaseType {
   libraryType: DefaultTypes['guard'];
-  name: string;
-  predicate: GuardPredicate<TC, TE, PTC>;
+  id: string;
+  predicate: GuardPredicate<TC, TE, PTC, PTE>;
 }
 
 export type GuardsOr<
   TC extends object,
   TE extends EventObject,
-  PTC extends object,
+  PTC extends object = object,
+  PTE extends EventObject = EventObject,
 > = {
   or: (
-    | Guard<TC, TE, PTC>
-    | GuardsOr<TC, TE, PTC>
-    | GuardsAnd<TC, TE, PTC>
+    | _Guard<TC, TE, PTC, PTE>
+    | GuardsOr<TC, TE, PTC, PTE>
+    | GuardsAnd<TC, TE, PTC, PTE>
   )[];
 };
 
 export type GuardsAnd<
   TC extends object,
   TE extends EventObject,
-  PTC extends object,
+  PTC extends object = object,
+  PTE extends EventObject = EventObject,
 > = {
   and: (
-    | Guard<TC, TE, PTC>
-    | GuardsOr<TC, TE, PTC>
-    | GuardsAnd<TC, TE, PTC>
+    | _Guard<TC, TE, PTC, PTE>
+    | GuardsOr<TC, TE, PTC, PTE>
+    | GuardsAnd<TC, TE, PTC, PTE>
   )[];
 };
 
 export type Guards<
   TC extends object,
   TE extends EventObject,
-  PTC extends object,
+  PTC extends object = object,
+  PTE extends EventObject = EventObject,
 > =
-  | GuardsOr<TC, TE, PTC>
-  | GuardsAnd<TC, TE, PTC>
-  | SingleOrArray<Guard<TC, TE, PTC>>;
+  | ({
+      libraryType: DefaultTypes['guard'];
+      id: string;
+    } & (GuardsOr<TC, TE, PTC, PTE> | GuardsAnd<TC, TE, PTC, PTE>))
+  | SingleOrArray<Guard<TC, TE, PTC, PTE>>;
 
 type Guard_JSON = WithString<{ id: string; description?: string }>;
 

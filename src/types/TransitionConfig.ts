@@ -14,16 +14,18 @@ export type DefaultTransitionConfigType = DefaultTypes['transitionConfig'];
 export interface TransitionConfigProps<
   TC extends object,
   TE extends EventEmit,
-  PTC extends object,
+  PTC extends object = object,
+  PTE extends EventEmit = EventEmit,
 > extends NOmit<BaseType, 'libraryType'> {
   event: TE;
-  transitions: SingleOrArray<Transition<TC, TE, PTC>>;
+  transitions: SingleOrArray<Transition<TC, TE, PTC, PTE>>;
 }
 
 export class TransitionConfig<
   TC extends object,
   TE extends EventEmit,
-  PTC extends object,
+  PTC extends object = object,
+  PTE extends EventEmit = EventEmit,
 > implements BaseType
 {
   get libraryType() {
@@ -34,7 +36,7 @@ export class TransitionConfig<
     return this.props.description;
   }
 
-  constructor(private props: TransitionConfigProps<TC, TE, PTC>) {}
+  constructor(private props: TransitionConfigProps<TC, TE, PTC, PTE>) {}
 
   readonly check = (event?: EventEmit) => {
     return compareEvents(this.props.event, event);
@@ -45,7 +47,7 @@ export class TransitionConfig<
     context,
     event,
     privateContext,
-  }: PropsWithValue<TC, TE, PTC>) {
+  }: PropsWithValue<TC, TE, PTC, PTE>) {
     const transitions = this.props.transitions;
     let props: Out<TC, PTC> = cloneDeep({ context, privateContext });
 

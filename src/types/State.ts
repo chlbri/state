@@ -1,71 +1,85 @@
 import { NOmit } from '@bemedev/core';
-import { StateValue } from '@bemedev/decompose';
 import cloneDeep from 'lodash.clonedeep';
 import { DEFAULT_TYPES } from '../constants/objects';
-import { isArray, isSingle } from '../helpers';
+import { createError } from '../helpers/Errors';
+import { Action } from './Action';
 import type { EventEmit } from './Event';
-import type { Out } from './Out';
-import type { TransitionConfig } from './TransitionConfig';
-import type { BaseType, DefaultTypes, SingleOrArray } from './_default';
+import { Guard } from './Guard';
+import { ServicePromise } from './Service';
+import type { BaseType, DefaultTypes } from './_default';
 
 export type DefaultStateType = DefaultTypes['state'];
 
 export interface StateProps<
-  TC extends object,
-  TE extends EventEmit,
-  PTC extends object,
+  TC extends object = object,
+  TE extends EventEmit = EventEmit,
+  PTC extends object = object,
+  PTE extends EventEmit = EventEmit,
+  R = any,
 > {
-  transitions?: SingleOrArray<TransitionConfig<TC, TE, PTC>>;
-  context: TC;
-  privateContext: PTC;
-  value: StateValue;
+  guards: Guard<TC, TE, PTC, PTE>[];
+  actions: Action<TC, TE, PTC, PTE>[];
+  promise?: ServicePromise<TC, TE, PTC, PTE, R>;
+  values: string[];
 }
 
+const ERRORS = {
+  guard: new Error('Guard not found'),
+  action: new Error('Action not found'),
+  promise: {
+    notExists: new Error('Promise not exists'),
+    notFound: new Error('Promise not found'),
+  },
+  id: new Error('Id not exists'),
+} as const;
+
 export class State<
-  TC extends object,
-  TE extends EventEmit,
-  PTC extends object,
+  TC extends object = object,
+  TE extends EventEmit = EventEmit,
+  PTC extends object = object,
+  PTE extends EventEmit = EventEmit,
+  R = any,
 > implements NOmit<BaseType, 'description'>
 {
+  static get ERRORS() {
+    return ERRORS;
+  }
+
   get libraryType() {
     return DEFAULT_TYPES.state;
   }
+  //TODO: create a function diminution
+  //TODO: Create the state machine and manage all
 
-  private readonly props: StateProps<TC, TE, PTC>;
+  private readonly props: StateProps<TC, TE, PTC, PTE, R>;
 
-  constructor(props: StateProps<TC, TE, PTC>) {
+  constructor(props: StateProps<TC, TE, PTC, PTE, R>) {
     this.props = cloneDeep(props);
   }
 
-  async send(event: TE) {
-    const { value, context, privateContext, transitions } = this.props;
-    let props: Out<TC, PTC> = { context, privateContext };
+  getGuard(searchId?: string) {
+    if (!searchId) throw State.ERRORS.id;
+    const guard = this.props.guards.find(guard => guard.id === searchId);
+    if (!guard) throw State.ERRORS.guard;
+    return guard;
+  }
 
-    if (isSingle(transitions)) {
-      if (transitions.check(event)) {
-        props = transitions.execute({
-          value,
-          context,
-          event,
-          privateContext,
-        });
-      }
-    }
+  getAction(searchId?: string) {
+    if (!searchId) throw State.ERRORS.id;
+    const find = this.props.actions.find(guard => guard.id === searchId);
+    if (!find) createError({ code: '', message: '' });
+    return find;
+  }
 
-    if (isArray(transitions)) {
-      for (const transition of transitions) {
-        if (transition.check(event)) {
-          props = transition.execute({
-            value,
-            event,
-            context,
-            privateContext,
-          });
-          break;
-        }
-      }
-    }
+  checkState(value: string) {
+    return this.props.values.includes(value);
+  }
 
-    return props;
+  getPromise(searchId?: string) {
+    if (!searchId) throw State.ERRORS.id;
+    const promise = this.props.promise;
+    if (!promise) throw State.ERRORS.promise.notExists;
+    if (promise.id === searchId) throw State.ERRORS.promise.notFound;
+    return promise;
   }
 }

@@ -10,25 +10,28 @@ export type ActionTypes = `${DefaultTypes['action']}.${Types}`;
 export type ActionFunction<
   TC extends object,
   TE extends EventObject,
-  PTC extends object,
+  PTC extends object = object,
+  PTE extends EventObject = EventObject,
 > = {
-  bivarianceHack(props?: Props<TC, TE, PTC>): Out<TC, PTC>;
+  bivarianceHack(props?: Props<TC, TE, PTC, PTE>): Out<TC, PTC>;
 }['bivarianceHack'];
 
 export interface ActionProps<
-  TC extends object,
-  TE extends EventObject,
-  PTC extends object,
+  TC extends object = object,
+  TE extends EventObject = EventObject,
+  PTC extends object = object,
+  PTE extends EventObject = EventObject,
 > extends BaseType {
   id: string;
   libraryType: ActionTypes;
-  exec: ActionFunction<TC, TE, PTC>;
+  exec: ActionFunction<TC, TE, PTC, PTE>;
 }
 
 export class Action<
-  TC extends object,
-  TE extends EventObject,
-  PTC extends object,
+  TC extends object = object,
+  TE extends EventObject = EventObject,
+  PTC extends object = object,
+  PTE extends EventObject = EventObject,
 > implements BaseType
 {
   get libraryType() {
@@ -44,7 +47,7 @@ export class Action<
   }
 
   readonly exec: typeof this.props.exec;
-  constructor(private props: ActionProps<TC, TE, PTC>) {
+  constructor(private props: ActionProps<TC, TE, PTC, PTE>) {
     this.exec = props.exec;
   }
 }

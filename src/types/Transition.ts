@@ -17,21 +17,23 @@ import type {
 } from './_default';
 
 export interface TransitionProps<
-  TC extends object,
-  TE extends EventObject,
-  PTC extends object,
+  TC extends object = object,
+  TE extends EventObject = EventObject,
+  PTC extends object = object,
+  PTE extends EventObject = EventObject,
 > extends BaseType {
   libraryType: DefaultTypes['transition'];
   guards?: Guards<TC, TE, PTC>;
   in?: SingleOrArray<string>;
-  actions?: Action<TC, TE, PTC>[];
+  actions?: Action<TC, TE, PTC, PTE>[];
   target?: string;
 }
 
 export class Transition<
-  TC extends object,
-  TE extends EventObject,
-  PTC extends object,
+  TC extends object = object,
+  TE extends EventObject = EventObject,
+  PTC extends object = object,
+  PTE extends EventObject = EventObject,
 > implements BaseType
 {
   get libraryType() {
@@ -59,7 +61,7 @@ export class Transition<
     return executable;
   }
 
-  private checkGuards(props: Props<TC, TE, PTC>) {
+  private checkGuards(props: Props<TC, TE, PTC, PTE>) {
     let executable = true;
     const guards = this.props.guards;
     if (guards) {
@@ -89,13 +91,16 @@ export class Transition<
     return result;
   }
 
-  readonly check = ({ value, ...props }: PropsWithValue<TC, TE, PTC>) => {
+  readonly check = ({
+    value,
+    ...props
+  }: PropsWithValue<TC, TE, PTC, PTE>) => {
     return this.checkIn(value) && this.checkGuards(props);
   };
 
-  constructor(private props: TransitionProps<TC, TE, PTC>) {}
+  constructor(private props: TransitionProps<TC, TE, PTC, PTE>) {}
 
-  execute(props: Props<TC, TE, PTC>) {
+  execute(props: Props<TC, TE, PTC, PTE>) {
     const result = this.executeActions(props);
 
     const _props: Out<TC, PTC> = {

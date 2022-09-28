@@ -9,5 +9,9 @@ module.exports = function (wallaby) {
       regular: 3,
       restart: false,
     },
+    hints: {
+      // or /istanbul ignore next/, or any RegExp
+      ignoreCoverage: /ignore coverage/,
+    },
   };
 };
