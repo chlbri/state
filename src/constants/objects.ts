@@ -8,5 +8,3 @@ export const DEFAULT_TYPES = {
   transition: 'state_manager.transition',
   transitionConfig: 'state_manager.transition_config',
 } as const;
-
-// TODO : Add Error codes

@@ -1,7 +1,7 @@
 import type { ZodType } from 'zod';
 import z from 'zod';
-import type { Literals, Strings } from '../../types';
-import type { NodeProps } from '../../types/Node';
+import type { Literals, Strings } from '../../Entities';
+import type { NodeProps } from '../../Entities/Node';
 
 function createZodStringLiterals<T extends Strings>(...values: T) {
   return z.union(values.map(value => z.literal(value)) as Literals);

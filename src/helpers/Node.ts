@@ -1,4 +1,4 @@
-import { Node } from '../types/Node';
+import { Node } from '../Entities/Node';
 
 export function getNode(target: string, ...states: Node[]) {
   const find = states.find(state => state.id === target);

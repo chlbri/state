@@ -1,7 +1,8 @@
 import {
   transitionActionsSchema,
   transitionComplexSchema,
-} from './../helpers/typeChecking/Transtions';
+} from '../helpers/typeChecking/Transtions';
+
 // TODO:  createMachine Function
 
 import { DEFAULT_TYPES } from '../constants/objects';
@@ -9,7 +10,6 @@ import {
   actionComplexSchema,
   actionSimpleSchema,
   createError,
-  getLastDefined,
   guardAndJSONschema,
   guardJSONschema,
   guardOrJSONschema,
@@ -17,23 +17,22 @@ import {
   reduceGuards,
 } from '../helpers';
 import { transitionTargetSchema } from '../helpers/typeChecking/Transtions';
+import { Out } from './Action';
 import { EventObject } from './Event';
 import { Guards, GuardsOption, Guards_JSON } from './Guard';
-import { Out } from './Out';
 import { Props } from './Props';
-import { State } from './State';
-import { Transition_JSON } from './Transition';
+import { Schema, State } from './State';
+import { Transition } from './Transition';
 
 export interface MachineProps<
   TC extends object = object,
   TE extends EventObject = EventObject,
   PTC extends object = object,
-  R = any,
+  S extends Schema<TC, TE, PTC> = Schema<TC, TE, PTC>,
 > {
-  id?: string;
   context: TC;
   privateContext: PTC;
-  states: State<TC, TE, PTC, R>[];
+  states: State<TC, TE, PTC, S>[];
   values: string[];
 }
 
@@ -44,9 +43,9 @@ const ERRORS = {
     notFound: createError({ code: 'm-02', message: 'State not found' }),
     same: createError({ code: 'm-04', message: 'ID is current' }),
   },
-  promise: createError({ code: 's-05', message: 'Promise not found' }),
+  promise: createError({ code: 'm-05', message: 'Promise not found' }),
   transition: createError({
-    code: 's-05',
+    code: 'm-06',
     message: 'Transtion not reachable',
   }),
 } as const;
@@ -55,29 +54,23 @@ export class Machine<
   TC extends object = object,
   TE extends EventObject = EventObject,
   PTC extends object = object,
-  R = any,
+  S extends Schema<TC, TE, PTC> = Schema<TC, TE, PTC>,
 > {
   static get ERRORS() {
     return ERRORS;
   }
 
-  private _id = '/';
+  readonly id = '/';
 
-  get id() {
-    return getLastDefined(this.props.id, this._id);
-  }
+  private currentState: State<TC, TE, PTC, S>;
 
-  private _currentState: State<TC, TE, PTC, R>;
-
-  constructor(private props: MachineProps<TC, TE, PTC, R>) {
-    const _state = props.states.find(state => state.id === '/');
+  constructor(private props: MachineProps<TC, TE, PTC, S>) {
+    const _state = props.states.find(state => state.id === this.id);
     if (!_state) throw Machine.ERRORS.master;
-    this._currentState = _state;
+    this.currentState = _state;
   }
 
-  private constructProps(
-    event?: EventObject,
-  ): Props<TC, EventObject, PTC> {
+  private constructProps(event?: TE): Props<TC, TE, PTC> {
     return {
       context: this.props.context,
       privateContext: this.props.privateContext,
@@ -95,8 +88,8 @@ export class Machine<
     return _state;
   };
 
-  performAction(searchActionId?: string, event?: EventObject) {
-    const action = this._currentState.getAction(searchActionId);
+  performAction(searchActionId?: string, event?: TE) {
+    const action = this.currentState.getAction(searchActionId);
     const props = this.constructProps(event);
     return action.exec(props);
   }
@@ -106,7 +99,7 @@ export class Machine<
     if (!guards) throw Machine.ERRORS.id;
     const simple = guardJSONschema.safeParse(guards);
     if (simple.success) {
-      return this._currentState.getGuard(simple.data.id);
+      return this.currentState.getGuard(simple.data.id);
     }
 
     const or = guardOrJSONschema.safeParse(guards);
@@ -141,8 +134,8 @@ export class Machine<
   // #endregion
 
   private performPromiseTransition(
-    transition?: Transition_JSON,
-    event?: EventObject,
+    transition?: Transition,
+    event?: TE,
   ): Out<TC, PTC> {
     if (!transition) throw Machine.ERRORS.id;
     let out: Out<TC, PTC> = {
@@ -166,7 +159,7 @@ export class Machine<
       const { guards, target, actions, in: _in } = _complex.data;
 
       if (_in) {
-        const noCheck = this._currentState.checkState(_in);
+        const noCheck = this.currentState.checkState(_in);
         if (noCheck) return out;
       }
 
@@ -217,7 +210,7 @@ export class Machine<
   }
 
   async performPromise(searchPromiseId?: string, event?: TE) {
-    const promise = this._currentState.getPromise(searchPromiseId);
+    const promise = this.currentState.getPromise(searchPromiseId);
     const props = this.constructProps(event);
     const _then = promise.then;
     const _catch = promise.catch;
@@ -234,7 +227,7 @@ export class Machine<
     } finally {
       if (_finally) {
         for (const funcStr of _finally) {
-          const action = this._currentState.getAction(funcStr);
+          const action = this.currentState.getAction(funcStr);
           action.exec(this.constructProps(event));
         }
       }

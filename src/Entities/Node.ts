@@ -14,7 +14,6 @@ export type NodeProps = {
   type?: 'atomic' | 'compound' | 'parallel';
   initial?: string;
   delimiter?: string;
-  // TODO: Add the Promise Discriminated Union
 } & (
   | {
       type: 'parallel';

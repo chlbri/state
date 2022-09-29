@@ -1,4 +1,4 @@
-import { EventObject, GuardPredicate, Guards, Props } from '../types';
+import { EventObject, GuardPredicate, Guards, Props } from '../Entities';
 import { isGuardAnd, isGuardOr, isSimpleGuard } from './typeChecking';
 
 /**

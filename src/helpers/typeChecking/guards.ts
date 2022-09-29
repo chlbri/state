@@ -8,7 +8,7 @@ import {
   GuardsAnd_JSON,
   GuardsOr,
   GuardsOr_JSON,
-} from '../../types';
+} from '../../Entities';
 
 export function isSimpleGuard<
   TC extends object = object,

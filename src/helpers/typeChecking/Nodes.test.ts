@@ -289,38 +289,47 @@ describe.concurrent('Atomic', () => {
     });
   });
 
-  describe('Is Atomic', () => {
-    test('"id" is the only defined property, "type" is defined to "atomic"', () => {
-      const actual = {
-        _id: 'ID',
-        type: 'atomic',
-      };
-      const received = safeAtomic(actual);
-      expect(received).not.toThrowError();
-      expect(received()).toEqual(actual);
-    });
+  describe.concurrent('Is Atomic', () => {
+    test.concurrent(
+      '"id" is the only defined property, "type" is defined to "atomic"',
+      () => {
+        const actual = {
+          _id: 'ID',
+          type: 'atomic',
+        };
+        const received = safeAtomic(actual);
+        expect(received).not.toThrowError();
+        expect(received()).toEqual(actual);
+      },
+    );
 
-    test('"id" is the only defined property, "description" is defined to undefined', () => {
-      const actual = {
-        _id: 'ID',
-        description: undefined,
-      };
-      const received = safeAtomic(actual);
-      expect(received).not.toThrowError();
-      expect(received()).toEqual(actual);
-    });
+    test.concurrent(
+      '"id" is the only defined property, "description" is defined to undefined',
+      () => {
+        const actual = {
+          _id: 'ID',
+          description: undefined,
+        };
+        const received = safeAtomic(actual);
+        expect(received).not.toThrowError();
+        expect(received()).toEqual(actual);
+      },
+    );
 
-    test('"id" is defined, and "promise" is defined to undefined', () => {
-      const actual = {
-        _id: 'ID',
-        promise: undefined,
-      };
-      const received = safeAtomic(actual);
-      expect(received).not.toThrowError();
-      expect(received()).toEqual(actual);
-    });
+    test.concurrent(
+      '"id" is defined, and "promise" is defined to undefined',
+      () => {
+        const actual = {
+          _id: 'ID',
+          promise: undefined,
+        };
+        const received = safeAtomic(actual);
+        expect(received).not.toThrowError();
+        expect(received()).toEqual(actual);
+      },
+    );
 
-    test('"id" and "description" are defined', () => {
+    test.concurrent('"id" and "description" are defined', () => {
       const actual = {
         _id: 'ID',
         description: 'A simple description',
@@ -330,7 +339,7 @@ describe.concurrent('Atomic', () => {
       expect(received()).toEqual(actual);
     });
 
-    test('"children" and "initial" are defined', () => {
+    test.concurrent('"children" and "initial" are defined', () => {
       const actual = {
         _id: 'ID',
         description: 'A simple description',

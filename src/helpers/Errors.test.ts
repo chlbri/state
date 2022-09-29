@@ -11,6 +11,7 @@ describe.concurrent('createError', () => {
     const message = 'a error';
     const cause = 'cause';
     const actual = createError({ code, message, cause });
+
     expect(actual).toBeDefined();
     expect(actual).toBeInstanceOf(Error);
     expect(actual.message).toBe(message);
@@ -31,6 +32,7 @@ describe.concurrent('createWarning', () => {
     const cause = 'cause';
     const spy = vi.spyOn(console, 'warn');
     createWarning({ code, message, cause });
+
     expect(spy).toBeCalledTimes(2);
     expect(spy).toBeCalledWith(code, '=>', message);
     expect(spy).toBeCalledWith('caused by', '=>', cause);
@@ -41,6 +43,7 @@ describe.concurrent('createWarning', () => {
     const message = 'a warning';
     const spy = vi.spyOn(console, 'warn');
     createWarning({ code, message });
+
     expect(spy).toBeCalledTimes(1);
     expect(spy).toBeCalledWith(code, '=>', message);
   });

@@ -37,29 +37,6 @@ export type EventObject<D = any> =
   | EventError
   | EventEmit<D>;
 
-type test = ExtenalEvent<
-  | {
-      libraryType: 'state_manager.event.emit';
-      event: '';
-      payload: 'ert';
-    }
-  | {
-      libraryType: 'state_manager.event.emit';
-      event: 'DOWNLOAD';
-      payload: 'erte';
-    }
-  | {
-      libraryType: 'state_manager.event.catch';
-      event: 'state_manager.event.catch';
-      error: Error;
-    }
-  | {
-      libraryType: 'state_manager.event.then';
-      event: 'state_manager.event.then';
-      data: Error;
-    }
->;
-
 export type Event<TE extends EventEmit> =
   | TE['event']
   | NOmit<TE, 'libraryType' | 'description'>;

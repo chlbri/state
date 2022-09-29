@@ -1,8 +1,8 @@
 import { NExtract, NOmit } from '@bemedev/core';
 import { Action_JSON } from './Action';
 import type { EventObject } from './Event';
-import { AsyncFunctionEvent } from './Functions';
-import type { Transition_JSON } from './Transition';
+import { AsyncFunctionEvent } from './Function';
+import type { Transition } from './Transition';
 import type { BaseType, DefaultTypes, SingleOrArray } from './_default';
 
 type Types = 'promise' | 'subscribable';
@@ -31,8 +31,8 @@ export interface ServicePromise<
   id: string;
   timeout: number;
   exec: AsyncFunctionEvent<TC, TE, PTC>;
-  then: Transition_JSON;
-  catch: Transition_JSON;
+  then: Transition;
+  catch: Transition;
   finally?: string[];
 }
 
@@ -49,7 +49,7 @@ export function createPromise<
 export type ServicePromise_JSON = {
   src: string;
   description?: string;
-  then: SingleOrArray<Transition_JSON>;
-  catch: SingleOrArray<Transition_JSON>;
+  then: SingleOrArray<Transition>;
+  catch: SingleOrArray<Transition>;
   finally?: SingleOrArray<Action_JSON>;
 };

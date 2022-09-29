@@ -1,4 +1,4 @@
-import { SingleOrArray } from '../types';
+import { SingleOrArray } from '../Entities';
 
 export function isArray<T>(
   value: SingleOrArray<T>,

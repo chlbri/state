@@ -104,7 +104,8 @@ export class State<
     return action;
   }
 
-  checkState(value: string[] | string) {
+  checkState(value?: string[] | string) {
+    if (!value) return false;
     if (typeof value === 'string') {
       return this.props.values.includes(value);
     }
