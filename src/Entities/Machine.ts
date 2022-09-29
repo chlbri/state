@@ -5,6 +5,7 @@ import {
 
 // TODO:  createMachine Function
 
+import { NOmit } from '@bemedev/core';
 import { DEFAULT_TYPES } from '../constants/objects';
 import {
   actionComplexSchema,
@@ -23,17 +24,23 @@ import { Guards, GuardsOption, Guards_JSON } from './Guard';
 import { Props } from './Props';
 import { Schema, State } from './State';
 import { Transition } from './Transition';
+import { BaseType } from './_default';
+
+export type StateValue = string | StateValueMap;
+
+export interface StateValueMap {
+  [key: string]: StateValue;
+}
 
 export interface MachineProps<
   TC extends object = object,
   TE extends EventObject = EventObject,
   PTC extends object = object,
   S extends Schema<TC, TE, PTC> = Schema<TC, TE, PTC>,
-> {
+> extends NOmit<BaseType, 'libraryType'> {
   context: TC;
   privateContext: PTC;
   states: State<TC, TE, PTC, S>[];
-  values: string[];
 }
 
 const ERRORS = {
@@ -50,23 +57,49 @@ const ERRORS = {
   }),
 } as const;
 
+const DEFAULT_ID = '/' as const;
+
 export class Machine<
-  TC extends object = object,
-  TE extends EventObject = EventObject,
-  PTC extends object = object,
-  S extends Schema<TC, TE, PTC> = Schema<TC, TE, PTC>,
-> {
+  TC extends object,
+  TE extends EventObject,
+  PTC extends object,
+  S extends Schema<TC, TE, PTC>,
+> implements NOmit<MachineProps<TC, TE, PTC, S>, 'states'>, BaseType
+{
   static get ERRORS() {
     return ERRORS;
   }
 
-  readonly id = '/';
+  static get defaultID() {
+    return DEFAULT_ID;
+  }
+
+  get context() {
+    return this.props.context;
+  }
+
+  get privateContext() {
+    return this.props.privateContext;
+  }
+
+  readonly libraryType = DEFAULT_TYPES.machine;
+
+  readonly description?: string | undefined;
+
+  readonly id = Machine.defaultID;
 
   private currentState: State<TC, TE, PTC, S>;
+
+  readonly initials: { context: TC; privateContext: PTC };
 
   constructor(private props: MachineProps<TC, TE, PTC, S>) {
     const _state = props.states.find(state => state.id === this.id);
     if (!_state) throw Machine.ERRORS.master;
+    this.description = this.props.description;
+    this.initials = Object.freeze({
+      context: props.context,
+      privateContext: props.privateContext,
+    });
     this.currentState = _state;
   }
 
@@ -78,15 +111,16 @@ export class Machine<
     };
   }
 
-  readonly changeState = (searchStateId?: string) => {
+  changeState(searchStateId?: string) {
     if (!searchStateId) throw Machine.ERRORS.id;
     if (searchStateId === this.id) throw Machine.ERRORS.state.same;
     const _state = this.props.states.find(
       ({ id }) => id === searchStateId,
     );
     if (!_state) throw Machine.ERRORS.state.notFound;
-    return _state;
-  };
+    this.currentState = _state;
+    return this.currentState;
+  }
 
   performAction(searchActionId?: string, event?: TE) {
     const action = this.currentState.getAction(searchActionId);
@@ -133,7 +167,9 @@ export class Machine<
   }
   // #endregion
 
-  private performPromiseTransition(
+  // private performPromiseTransitionTarget
+
+  private performTransition(
     transition?: Transition,
     event?: TE,
   ): Out<TC, PTC> {
@@ -218,12 +254,12 @@ export class Machine<
 
     try {
       const data = (await promise.exec(props)) as any;
-      this.performPromiseTransition(_then, data);
+      this.performTransition(_then, data);
     } catch (err: any) {
       const libraryType = `${DEFAULT_TYPES.event}.catch` as const;
       const error = err && err instanceof Error ? err : new Error();
       const event = { libraryType, error, event: libraryType } as any;
-      this.performPromiseTransition(_catch, event);
+      this.performTransition(_catch, event);
     } finally {
       if (_finally) {
         for (const funcStr of _finally) {

@@ -2,7 +2,7 @@ import { NExtract, NOmit } from '@bemedev/core';
 import { Action_JSON } from './Action';
 import type { EventObject } from './Event';
 import { AsyncFunctionEvent } from './Function';
-import type { Transition } from './Transition';
+import type { Transition, TransitionExtend } from './Transition';
 import type { BaseType, DefaultTypes, SingleOrArray } from './_default';
 
 type Types = 'promise' | 'subscribable';
@@ -49,7 +49,7 @@ export function createPromise<
 export type ServicePromise_JSON = {
   src: string;
   description?: string;
-  then: SingleOrArray<Transition>;
-  catch: SingleOrArray<Transition>;
+  then: SingleOrArray<TransitionExtend>;
+  catch: SingleOrArray<TransitionExtend>;
   finally?: SingleOrArray<Action_JSON>;
 };

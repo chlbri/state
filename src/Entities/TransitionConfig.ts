@@ -1,5 +1,5 @@
 import { DEFAULT_TYPES } from '../constants/objects';
-import { createTransition, Transition } from './Transition';
+import { createTransition, Transition, TransitionExtend } from './Transition';
 import type { BaseType, DefaultTypes, SingleOrArray } from './_default';
 
 export type DefaultTransitionConfigType = DefaultTypes['transitionConfig'];
@@ -11,7 +11,7 @@ export interface TransitionConfig extends BaseType {
 }
 
 export type TransitionConfig_JSON = {
-  [event: string]: SingleOrArray<Transition>;
+  [event: string]: SingleOrArray<TransitionExtend>;
 };
 
 export function createTransitionConfigs(
