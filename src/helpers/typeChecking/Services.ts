@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { DEFAULT_TYPES } from '../../constants/objects';
 import { actionSchema } from './Actions';
 import { transitionSchema } from './Transtions';
 import { baseSchema } from './_default';
@@ -16,7 +15,6 @@ export const promiseJsonSchema = baseSchema
 export const subscribableJsonSchema = z.union([
   z.string(),
   baseSchema.omit({ libraryType: true }).extend({
-    libraryType: z.literal(DEFAULT_TYPES.service.object.subscribable),
     src: z.string(),
     next: z.union([actionSchema, z.array(actionSchema)]).optional(),
     error: z.union([transitionSchema, z.array(transitionSchema)]),
