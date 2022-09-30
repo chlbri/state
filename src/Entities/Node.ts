@@ -9,10 +9,10 @@ export type DefaultNodeType = DefaultTypes['node'];
 type JSONTypes = DefaultTypes['node']['types']['array'][number];
 type TyE<K extends JSONTypes> = NExtract<JSONTypes, K>;
 
-export type NodeJSON = {
+export type Node = {
   parentId?: string;
   id?: string;
-  children?: Record<string, NodeJSON>;
+  children?: Record<string, Node>;
   description?: string;
   type?: JSONTypes;
   initial?: string;
@@ -26,12 +26,12 @@ export type NodeJSON = {
   | {
       type: TyE<'parallel'>;
       initial?: undefined;
-      children: Record<string, NodeJSON>;
+      children: Record<string, Node>;
     }
   | {
       type?: TyE<'compound'>;
       initial: string;
-      children: Record<string, NodeJSON>;
+      children: Record<string, Node>;
     }
   | {
       type?: TyE<'atomic'>;
@@ -39,24 +39,3 @@ export type NodeJSON = {
       children?: undefined;
     }
 );
-// export class Node implements BaseType {
-//   get libraryType() {
-//     return DEFAULT_TYPES.node;
-//   }
-
-//   private get delimiter() {
-//     return this.props.delimiter ?? STRINGS.DEFAULT_STATE_DELIMITER;
-//   }
-
-//   private get parentId() {
-//     return this.props.parentId ?? '';
-//   }
-
-//   get id() {
-//     return this.props.id
-//       ? `#${this.props.id}`
-//       : `${this.parentId}${this.delimiter}${this.props._id}`;
-//   }
-
-//   constructor(private props: NodeProps) {}
-// }

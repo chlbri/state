@@ -3,8 +3,13 @@ import z from 'zod';
 import { DEFAULT_TYPES } from '../../constants/objects';
 import { DEFAULT_STATE_DELIMITER } from '../../constants/strings';
 import type { Literals, Strings } from '../../Entities';
-import type { NodeJSON } from '../../Entities/Node';
+import type { Node } from '../../Entities/Node';
 import { promiseJsonSchema, subscribableJsonSchema } from './Services';
+import {
+  transitionConfigAfterSchema,
+  transitionConfigEventSchema,
+  transitionConfigNowSchema,
+} from './TranstionsConfig';
 import { baseSchema } from './_default';
 
 function createZodStringLiterals<T extends Strings>(...values: T) {
@@ -36,10 +41,13 @@ const nodeCommonSchema = baseSchema
     subscribables: z
       .union([subscribableJsonSchema, z.array(subscribableJsonSchema)])
       .optional(),
+    events: transitionConfigEventSchema.optional(),
+    now: transitionConfigNowSchema.optional(),
+    after: transitionConfigAfterSchema.optional(),
   })
   .strict();
 
-export const nodeSchema: ZodType<NodeJSON> = z.lazy(() =>
+export const nodeSchema: ZodType<Node> = z.lazy(() =>
   z.union([parallelNodeSchema, compoundNodeSchema, atomicNodeSchema]),
 );
 
@@ -47,11 +55,13 @@ const childrenSchema = z
   .record(nodeSchema)
   .refine(objectIsNotEmpty, { message: 'Children must be superior to 2' });
 
-export const parallelNodeSchema = nodeCommonSchema.extend({
-  type: z.literal(DEFAULT_TYPES.node.types.object.parallel),
-  initial: z.undefined().optional(),
-  children: childrenSchema,
-});
+export const parallelNodeSchema = nodeCommonSchema
+  .extend({
+    type: z.literal(DEFAULT_TYPES.node.types.object.parallel),
+    initial: z.undefined().optional(),
+    children: childrenSchema,
+  })
+  .strict();
 
 export const compoundNodeSchemaError = {
   message: 'Initial must be one child',
@@ -63,14 +73,17 @@ export const compoundNodeSchema = nodeCommonSchema
     initial: z.string(),
     children: childrenSchema,
   })
+  .strict()
   .refine(childrenIdsIncludeInitial, compoundNodeSchemaError);
 
-export const atomicNodeSchema = nodeCommonSchema.extend({
-  type: z.literal(DEFAULT_TYPES.node.types.object.atomic).optional(),
-  initial: z.undefined().optional(),
-  promise: z.undefined().optional(),
-  subscribable: z.undefined().optional(),
-  children: z.undefined().optional(),
-});
+export const atomicNodeSchema = nodeCommonSchema
+  .extend({
+    type: z.literal(DEFAULT_TYPES.node.types.object.atomic).optional(),
+    initial: z.undefined().optional(),
+    promise: z.undefined().optional(),
+    subscribable: z.undefined().optional(),
+    children: z.undefined().optional(),
+  })
+  .strict();
 
-// TODO : Define all error
+// TODO : Define all errors
