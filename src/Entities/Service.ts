@@ -3,10 +3,14 @@ import { Action_JSON } from './Action';
 import type { EventObject } from './Event';
 import { AsyncFunctionEvent } from './Function';
 import type { Transition, TransitionExtend } from './Transition';
-import type { BaseType, DefaultTypes, SingleOrArray } from './_default';
+import type {
+  BaseType,
+  DefaultTypes,
+  SingleOrArray,
+  WithString,
+} from './_default';
 
-type Types = 'promise' | 'subscribable';
-export type ServiceType = `${DefaultTypes['service']}.${Types}`;
+export type ServiceType = DefaultTypes['service']['array'][number];
 
 export interface Observer<T> {
   next: (value: T) => void;
@@ -53,3 +57,9 @@ export type ServicePromise_JSON = {
   catch: SingleOrArray<TransitionExtend>;
   finally?: SingleOrArray<Action_JSON>;
 };
+
+export type Subscribable_JSON = WithString<{
+  src: string;
+  description?: string;
+  complete?: SingleOrArray<Action_JSON>;
+}>;

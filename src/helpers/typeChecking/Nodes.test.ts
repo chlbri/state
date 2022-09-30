@@ -16,46 +16,69 @@ describe.concurrent('isParallel', () => {
     });
 
     test.concurrent('Property "type" is not defined', () => {
-      const actual = { _id: 'ID' };
+      const actual = { id: 'ID' };
       expect(safeParallel(actual)).toThrowError();
     });
 
     test.concurrent('Property "type" is defined to another type', () => {
-      const actual = { _id: 'ID', type: 'compound' };
+      const actual = { type: 'compound' };
       expect(safeParallel(actual)).toThrowError();
     });
 
-    test.concurrent('Property "children" is not defined', () => {
-      const actual = { _id: 'ID', type: 'parallel' };
-      expect(safeParallel(actual)).toThrowError();
-    });
+    test.concurrent(
+      'Property "type" is defined to "parallel", Property "children" is not defined',
+      () => {
+        const actual = { type: 'parallel' };
+        expect(safeParallel(actual)).toThrowError();
+      },
+    );
 
-    test.concurrent('Property "children" is defined, but empty', () => {
-      const actual = {
-        _id: 'ID',
-        type: 'parallel',
-        children: [],
-      };
-      expect(safeParallel(actual)).toThrowError();
-    });
+    test.concurrent(
+      'Property "type" is defined to "parallel", Property "children" is defined, but empty',
+      () => {
+        const actual = {
+          type: 'parallel',
+          children: {},
+        };
+        expect(safeParallel(actual)).toThrowError(
+          'Children must be superior to 2',
+        );
+      },
+    );
 
-    test.concurrent('Property "promise" is defined', () => {
-      const actual = {
-        _id: 'ID',
-        type: 'parallel',
-        children: [{ _id: 'child1' }, { _id: 'child2' }],
-        promise: '',
-      };
-      expect(safeParallel(actual)).toThrowError();
-    });
+    test.concurrent(
+      'Property "type" is defined to "parallel", Property "children" is defined, but only 1 child',
+      () => {
+        const actual = {
+          type: 'parallel',
+          children: {
+            child: {},
+          },
+        };
+        expect(safeParallel(actual)).toThrowError(
+          'Children must be superior to 2',
+        );
+      },
+    );
+
+    test.concurrent(
+      'Property "type" is defined to "parallel", Property "children" is defined and non-empty, but initial is defined',
+      () => {
+        const actual = {
+          type: 'parallel',
+          children: { child1: {}, child2: {} },
+          initial: 'child1',
+        };
+        expect(safeParallel(actual)).toThrowError();
+      },
+    );
   });
 
   describe.concurrent('Is Parallel', () => {
     test.concurrent('With atomic children', () => {
       const actual = {
-        _id: 'ID',
         type: 'parallel',
-        children: [{ _id: 'child1' }, { _id: 'child2' }],
+        children: { child1: {}, child2: {} },
       };
       const received = safeParallel(actual);
       expect(received).not.toThrowError();
@@ -64,16 +87,17 @@ describe.concurrent('isParallel', () => {
 
     test.concurrent('With compound children', () => {
       const actual = {
-        _id: 'ID',
         type: 'parallel',
-        children: [
-          {
-            _id: 'child1',
-            children: [{ _id: 'grandChild1' }, { _id: 'grandChild2' }],
+        children: {
+          child1: {
             initial: 'grandChild1',
+            children: {
+              grandChild1: {},
+              grandChild2: {},
+            },
           },
-          { _id: 'child2' },
-        ],
+          child2: {},
+        },
       };
       const received = safeParallel(actual);
       expect(received).not.toThrowError();
@@ -82,16 +106,17 @@ describe.concurrent('isParallel', () => {
 
     test.concurrent('With nexted parallel children', () => {
       const actual = {
-        _id: 'ID',
         type: 'parallel',
-        children: [
-          {
-            _id: 'child1',
-            children: [{ _id: 'grandChild1' }, { _id: 'grandChild2' }],
+        children: {
+          child1: {
             type: 'parallel',
+            children: {
+              grandChild1: {},
+              grandChild2: {},
+            },
           },
-          { _id: 'child2' },
-        ],
+          child2: {},
+        },
       };
       const received = safeParallel(actual);
       expect(received).not.toThrowError();
@@ -107,17 +132,9 @@ describe.concurrent('Compound', () => {
 
   describe.concurrent('Not Compound', () => {
     test.concurrent(
-      'Property "type" and "children" are not defined,',
-      () => {
-        const actual = { _id: 'ID' };
-        expect(safeCompound(actual)).toThrowError();
-      },
-    );
-
-    test.concurrent(
       'Property "type" is not defined to "compound", but not "children"',
       () => {
-        const actual = { _id: 'ID', type: 'parallel' };
+        const actual = { type: 'parallel' };
         expect(safeCompound(actual)).toThrowError();
       },
     );
@@ -125,16 +142,30 @@ describe.concurrent('Compound', () => {
     test.concurrent(
       'Property "type" is defined to "compound", but not "children"',
       () => {
-        const actual = { _id: 'ID', type: 'compound' };
+        const actual = { type: 'compound' };
         expect(safeCompound(actual)).toThrowError();
       },
     );
 
     test.concurrent(
-      'Property "type" and "children" are defined, but not "children" is empty',
+      'Property "type" and "children" are defined, but "children" is empty',
       () => {
-        const actual = { _id: 'ID', type: 'compound', children: [] };
+        const actual = { type: 'compound', children: {} };
         expect(safeCompound(actual)).toThrowError();
+      },
+    );
+
+    test.concurrent(
+      'Property "type" is defined to "parallel", Property "children" is defined, but only 1 child',
+      () => {
+        const actual = {
+          children: {
+            child: {},
+          },
+        };
+        expect(safeCompound(actual)).toThrowError(
+          'Children must be superior to 2',
+        );
       },
     );
 
@@ -142,9 +173,8 @@ describe.concurrent('Compound', () => {
       'Property "type" and "children" are defined,"children" is not empty, but "initial" is not defined',
       () => {
         const actual = {
-          _id: 'ID',
           type: 'compound',
-          children: [{ _id: 'child1' }, { _id: 'child2' }],
+          children: { child1: {}, child2: {} },
         };
         expect(safeCompound(actual)).toThrowError();
       },
@@ -154,24 +184,9 @@ describe.concurrent('Compound', () => {
       'Property "type" and "children" are defined,"children" is not empty,"initial" is defined , but "intial" is not corresponded to "children" ids',
       () => {
         const actual = {
-          _id: 'ID',
           type: 'compound',
-          children: [{ _id: 'child1' }, { _id: 'child2' }],
+          children: { child1: {}, child2: {} },
           initial: 'not child',
-        };
-        expect(safeCompound(actual)).toThrowError();
-      },
-    );
-
-    test.concurrent(
-      'Property "type" and "children" are defined,"children" is not empty,"initial" is defined , but "intial" corresponds to "children" ids, but "promise" is defined',
-      () => {
-        const actual = {
-          _id: 'ID',
-          type: 'compound',
-          children: [{ _id: 'child1' }, { _id: 'child2' }],
-          initial: 'child1',
-          promise: '',
         };
         expect(safeCompound(actual)).toThrowError();
       },
@@ -183,9 +198,8 @@ describe.concurrent('Compound', () => {
       'Type is not defined, but children and initial are defined',
       () => {
         const actual = {
-          _id: 'ID',
           initial: 'child1',
-          children: [{ _id: 'child1' }, { _id: 'child2' }],
+          children: { child1: {}, child2: {} },
         };
         const received = safeCompound(actual);
 
@@ -195,10 +209,9 @@ describe.concurrent('Compound', () => {
     );
     test.concurrent('With atomic children, type is defined', () => {
       const actual = {
-        _id: 'ID',
         type: 'compound',
         initial: 'child1',
-        children: [{ _id: 'child1' }, { _id: 'child2' }],
+        children: { child1: {}, child2: {} },
       };
       const received = safeCompound(actual);
 
@@ -208,15 +221,16 @@ describe.concurrent('Compound', () => {
 
     test.concurrent('With compound children', () => {
       const actual = {
-        _id: 'ID',
-        children: [
-          {
-            _id: 'child1',
-            children: [{ _id: 'grandChild1' }, { _id: 'grandChild2' }],
+        children: {
+          child1: {
             initial: 'grandChild1',
+            children: {
+              grandChild1: {},
+              grandChild2: {},
+            },
           },
-          { _id: 'child2' },
-        ],
+          child2: {},
+        },
         initial: 'child1',
       };
       const received = safeCompound(actual);
@@ -224,27 +238,24 @@ describe.concurrent('Compound', () => {
       expect(received()).toEqual(actual);
     });
 
-    test.concurrent(
-      'With nexted parallel children, "promise" is defined to undefined',
-      () => {
-        const actual = {
-          _id: 'ID',
-          children: [
-            {
-              _id: 'child1',
-              children: [{ _id: 'grandChild1' }, { _id: 'grandChild2' }],
-              type: 'parallel',
+    test.concurrent('With nested parallel children', () => {
+      const actual = {
+        children: {
+          child1: {
+            type: 'parallel',
+            children: {
+              grandChild1: {},
+              grandChild2: {},
             },
-            { _id: 'child2' },
-          ],
-          initial: 'child2',
-          promise: undefined,
-        };
-        const received = safeCompound(actual);
-        expect(received).not.toThrowError();
-        expect(received()).toEqual(actual);
-      },
-    );
+          },
+          child2: {},
+        },
+        initial: 'child2',
+      };
+      const received = safeCompound(actual);
+      expect(received).not.toThrowError();
+      expect(received()).toEqual(actual);
+    });
   });
 });
 
@@ -254,16 +265,10 @@ describe.concurrent('Atomic', () => {
   };
 
   describe.concurrent('Not Atomic', () => {
-    test.concurrent('No property is not defined', () => {
-      const actual = {};
-      expect(safeAtomic(actual)).toThrowError();
-    });
-
     test.concurrent('Parallel node', () => {
       const actual = {
-        _id: 'ID',
         type: 'parallel',
-        children: [{ _id: 'child1' }, { _id: 'child2' }],
+        children: { child1: {}, child2: {} },
       };
       const received = safeAtomic(actual);
       expect(received).toThrowError();
@@ -271,18 +276,8 @@ describe.concurrent('Atomic', () => {
 
     test.concurrent('Compound node', () => {
       const actual = {
-        _id: 'ID',
         initial: 'child1',
-        children: [{ _id: 'child1' }, { _id: 'child2' }],
-      };
-      const received = safeAtomic(actual);
-      expect(received).toThrowError();
-    });
-
-    test.concurrent('"promise" is defined', () => {
-      const actual = {
-        _id: 'ID',
-        promise: '',
+        children: { child1: {}, child2: {} },
       };
       const received = safeAtomic(actual);
       expect(received).toThrowError();
@@ -290,11 +285,17 @@ describe.concurrent('Atomic', () => {
   });
 
   describe.concurrent('Is Atomic', () => {
+    test.concurrent('No property is not defined', () => {
+      const actual = {};
+      const received = safeAtomic(actual);
+      expect(received).not.toThrow();
+      expect(received()).toEqual(actual);
+    });
+
     test.concurrent(
       '"id" is the only defined property, "type" is defined to "atomic"',
       () => {
         const actual = {
-          _id: 'ID',
           type: 'atomic',
         };
         const received = safeAtomic(actual);
@@ -307,21 +308,7 @@ describe.concurrent('Atomic', () => {
       '"id" is the only defined property, "description" is defined to undefined',
       () => {
         const actual = {
-          _id: 'ID',
           description: undefined,
-        };
-        const received = safeAtomic(actual);
-        expect(received).not.toThrowError();
-        expect(received()).toEqual(actual);
-      },
-    );
-
-    test.concurrent(
-      '"id" is defined, and "promise" is defined to undefined',
-      () => {
-        const actual = {
-          _id: 'ID',
-          promise: undefined,
         };
         const received = safeAtomic(actual);
         expect(received).not.toThrowError();
@@ -331,7 +318,6 @@ describe.concurrent('Atomic', () => {
 
     test.concurrent('"id" and "description" are defined', () => {
       const actual = {
-        _id: 'ID',
         description: 'A simple description',
       };
       const received = safeAtomic(actual);
@@ -341,7 +327,6 @@ describe.concurrent('Atomic', () => {
 
     test.concurrent('"children" and "initial" are defined', () => {
       const actual = {
-        _id: 'ID',
         description: 'A simple description',
         children: undefined,
         initial: undefined,

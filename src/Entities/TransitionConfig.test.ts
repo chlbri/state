@@ -29,18 +29,18 @@ test.concurrent('Transition -> Target', () => {
   });
   const expected: TransitionConfig[] = [
     {
-      libraryType: DEFAULT_TYPES.transitionConfig,
-      event: 'event1',
+      libraryType: DEFAULT_TYPES.transitionConfig.options.byEvent,
+      eventType: 'event1',
       transitions: [{ target: 'idle' }],
     },
     {
-      libraryType: DEFAULT_TYPES.transitionConfig,
-      event: 'event2',
+      libraryType: DEFAULT_TYPES.transitionConfig.options.byEvent,
+      eventType: 'event2',
       transitions: [{ target: 'off' }],
     },
     {
-      libraryType: DEFAULT_TYPES.transitionConfig,
-      event: 'event3',
+      libraryType: DEFAULT_TYPES.transitionConfig.options.byEvent,
+      eventType: 'event3',
       transitions: [{ target: 'on' }],
     },
   ];
@@ -56,13 +56,13 @@ test.concurrent('Transition -> Actions', () => {
 
   const expected: TransitionConfig[] = [
     {
-      libraryType: DEFAULT_TYPES.transitionConfig,
-      event: 'event1',
+      libraryType: DEFAULT_TYPES.transitionConfig.options.byEvent,
+      eventType: 'event1',
       transitions: [{ actions: ['eat', 'sleep'] }],
     },
     {
-      libraryType: DEFAULT_TYPES.transitionConfig,
-      event: 'event2',
+      libraryType: DEFAULT_TYPES.transitionConfig.options.byEvent,
+      eventType: 'event2',
       transitions: [{ actions: ['run', 'walk'] }],
     },
   ];
@@ -78,13 +78,13 @@ test.concurrent('Transition -> Transition Object', () => {
 
   const expected: TransitionConfig[] = [
     {
-      libraryType: DEFAULT_TYPES.transitionConfig,
-      event: 'event1',
+      libraryType: DEFAULT_TYPES.transitionConfig.options.byEvent,
+      eventType: 'event1',
       transitions: [{ actions: ['eat', 'sleep'], target: 'on' }],
     },
     {
-      libraryType: DEFAULT_TYPES.transitionConfig,
-      event: 'event2',
+      libraryType: DEFAULT_TYPES.transitionConfig.options.byEvent,
+      eventType: 'event2',
       transitions: [{ actions: 'walk', target: 'off' }],
     },
   ];
@@ -111,24 +111,24 @@ test.concurrent('Transition -> Transition Array', () => {
 
   const expected: TransitionConfig[] = [
     {
-      libraryType: DEFAULT_TYPES.transitionConfig,
-      event: 'event1',
+      libraryType: DEFAULT_TYPES.transitionConfig.options.byEvent,
+      eventType: 'event1',
       transitions: [
         { actions: ['eat', 'sleep'], target: 'on', guards: 'isValid' },
         { actions: ['sing', 'scream'] },
       ],
     },
     {
-      libraryType: DEFAULT_TYPES.transitionConfig,
-      event: 'event2',
+      libraryType: DEFAULT_TYPES.transitionConfig.options.byEvent,
+      eventType: 'event2',
       transitions: [
         { actions: ['cook', 'finance'] },
         { actions: ['play', 'sing'] },
       ],
     },
     {
-      libraryType: DEFAULT_TYPES.transitionConfig,
-      event: 'event3',
+      libraryType: DEFAULT_TYPES.transitionConfig.options.byEvent,
+      eventType: 'event3',
       transitions: [
         { actions: 'walk', target: 'off', guards: ['isAdmin', 'isDev'] },
       ],

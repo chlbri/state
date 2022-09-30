@@ -1,60 +1,62 @@
-import { NOmit } from '@bemedev/core';
-import { STRINGS } from '../constants';
-import { DEFAULT_TYPES } from '../constants/objects';
-import { BaseType, DefaultTypes } from './_default';
+import { NExtract } from '@bemedev/core';
+import { ServicePromise_JSON, Subscribable_JSON } from './Service';
+import { TransitionExtend } from './Transition';
+import { TransitionMap_JSON } from './TransitionConfig';
+import { DefaultTypes, SingleOrArray } from './_default';
 
 export type DefaultNodeType = DefaultTypes['node'];
 
-export type NodeProps = {
+type JSONTypes = DefaultTypes['node']['types']['array'][number];
+type TyE<K extends JSONTypes> = NExtract<JSONTypes, K>;
+
+export type NodeJSON = {
   parentId?: string;
-  _id: string;
   id?: string;
-  children?: NodeProps[];
+  children?: Record<string, NodeJSON>;
   description?: string;
-  type?: 'atomic' | 'compound' | 'parallel';
+  type?: JSONTypes;
   initial?: string;
   delimiter?: string;
+  promises?: SingleOrArray<ServicePromise_JSON>;
+  subscribables?: SingleOrArray<Subscribable_JSON>;
+  events?: TransitionMap_JSON;
+  now?: SingleOrArray<TransitionExtend>;
+  after?: SingleOrArray<TransitionExtend>;
 } & (
   | {
-      type: 'parallel';
+      type: TyE<'parallel'>;
       initial?: undefined;
-      children: NodeProps[];
-      // promise?: undefined;
+      children: Record<string, NodeJSON>;
     }
   | {
-      type?: 'compound';
+      type?: TyE<'compound'>;
       initial: string;
-      children: NodeProps[];
-      // promise?: undefined;
+      children: Record<string, NodeJSON>;
     }
   | {
-      type?: 'atomic';
+      type?: TyE<'atomic'>;
       initial?: undefined;
       children?: undefined;
-      // promise?: undefined;
     }
-) &
-  // | { type?: 'promise'; initial?: undefined; promise: ServicePromise_JSON }
-  NOmit<BaseType, 'libraryType'>;
+);
+// export class Node implements BaseType {
+//   get libraryType() {
+//     return DEFAULT_TYPES.node;
+//   }
 
-export class Node implements BaseType {
-  get libraryType() {
-    return DEFAULT_TYPES.node;
-  }
+//   private get delimiter() {
+//     return this.props.delimiter ?? STRINGS.DEFAULT_STATE_DELIMITER;
+//   }
 
-  private get delimiter() {
-    return this.props.delimiter ?? STRINGS.DEFAULT_STATE_DELIMITER;
-  }
+//   private get parentId() {
+//     return this.props.parentId ?? '';
+//   }
 
-  private get parentId() {
-    return this.props.parentId ?? '';
-  }
+//   get id() {
+//     return this.props.id
+//       ? `#${this.props.id}`
+//       : `${this.parentId}${this.delimiter}${this.props._id}`;
+//   }
 
-  get id() {
-    return this.props.id
-      ? `#${this.props.id}`
-      : `${this.parentId}${this.delimiter}${this.props._id}`;
-  }
-
-  constructor(private props: NodeProps) {}
-}
+//   constructor(private props: NodeProps) {}
+// }
