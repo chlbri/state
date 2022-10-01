@@ -22,7 +22,7 @@ export interface Guard<
 > extends BaseType {
   libraryType: DefaultTypes['guard'];
   id: string;
-  predicate: GuardPredicate<TC, TE, PTC>;
+  predicate?: GuardPredicate<TC, TE, PTC>;
 }
 
 export type GuardsOr<
@@ -55,18 +55,22 @@ export type Guards<
   | (GuardsOr<TC, TE, PTC> | GuardsAnd<TC, TE, PTC>)
   | SingleOrArray<Guard<TC, TE, PTC>>;
 
-type Guard_JSON = WithString<{ id: string; description?: string }>;
+export type Guard_JSON = { id: string; description?: string };
+
+export type GuardUnion = WithString<
+  GuardsOr_JSON | GuardsAnd_JSON | Guard_JSON
+>;
 
 export type GuardsOr_JSON = {
-  or: (Guard_JSON | GuardsOr_JSON | GuardsAnd_JSON)[];
+  or: GuardUnion[];
 };
 
 export type GuardsAnd_JSON = {
-  and: (Guard_JSON | GuardsOr_JSON | GuardsAnd_JSON)[];
+  and: GuardUnion[];
 };
 
 export type Guards_JSON =
-  | SingleOrArray<Guard_JSON>
+  | SingleOrArray<WithString<Guard_JSON>>
   | GuardsAnd_JSON
   | GuardsOr_JSON;
 

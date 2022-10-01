@@ -1,17 +1,7 @@
 import { DEFAULT_TYPES } from '../constants/objects';
 import type { EventObject } from './Event';
 import type { Props } from './Props';
-import type { BaseType, WithString } from './_default';
-
-export const ACTIONS_TYPES = {
-  void: `${DEFAULT_TYPES.action}.void`,
-  assign: `${DEFAULT_TYPES.action}.assign`,
-  start: `${DEFAULT_TYPES.action}.start`,
-} as const;
-
-type Types = keyof typeof ACTIONS_TYPES;
-
-export type ActionTypes = typeof ACTIONS_TYPES[Types];
+import type { BaseType, DefaultTypes } from './_default';
 
 export type Out<TC extends object, PTC extends object> = {
   context?: TC;
@@ -33,8 +23,8 @@ export interface Action<
   PTC extends object = object,
 > extends BaseType {
   id: string;
-  libraryType: ActionTypes;
-  exec: ActionFunction<TC, TE, PTC>;
+  libraryType: DefaultTypes['action'];
+  exec?: ActionFunction<TC, TE, PTC>;
 }
 
 function assign<
@@ -42,14 +32,14 @@ function assign<
   TE extends EventObject = EventObject,
   PTC extends object = object,
 >(assigner: ActionFunction<TC, TE, PTC>) {
-  return { exec: assigner, libraryType: ACTIONS_TYPES.assign };
+  return { exec: assigner, libraryType: DEFAULT_TYPES.action };
 }
 
 export const Actions = {
   assign,
 };
 
-export type Action_JSON = WithString<{
+export type Action_JSON = {
   id: string;
   description?: string;
-}>;
+};

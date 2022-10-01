@@ -10,8 +10,9 @@ export type Transition = {
   description?: string;
   guards?: Guards_JSON;
   in?: SingleOrArray<string>;
-  actions?: SingleOrArray<Action_JSON>;
+  actions?: SingleOrArray<WithString<Action_JSON>>;
   target?: string;
+  event?: string;
 };
 
 export type TransitionExtend = string[] | WithString<Transition>;

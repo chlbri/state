@@ -69,6 +69,30 @@ describe.concurrent('not Config, throws error', () => {
     expect(received).toThrowError();
   });
 
+  test.concurrent(
+    'context is well defined, but private not well defined',
+    () => {
+      const actual = {
+        privateContext: {
+          noProperty: 0,
+        },
+        context: {
+          user: {
+            login: 'chlbri',
+          },
+        },
+        initial: 'child1',
+        children: {
+          child1: {},
+          child2: {},
+        },
+      };
+      const received = safeParse(actual);
+
+      expect(received).toThrowError();
+    },
+  );
+
   test.concurrent('context is well defined, but atomic', () => {
     const actual1 = {
       privateContext: {

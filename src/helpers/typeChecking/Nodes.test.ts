@@ -282,6 +282,49 @@ describe.concurrent('Atomic', () => {
       const received = safeAtomic(actual);
       expect(received).toThrowError();
     });
+
+    describe.concurrent('Atomic but errors', () => {
+      test.concurrent('Children are defined', () => {
+        const actual = {
+          type: 'atomic',
+          children: { child1: {}, child2: {} },
+        };
+        const received = safeAtomic(actual);
+        expect(received).toThrowError();
+      });
+
+      test.concurrent('Events are not well defined', () => {
+        const actual = {
+          type: 'atomic',
+          events: {
+            data: 1,
+          },
+        };
+        const received = safeAtomic(actual);
+        expect(received).toThrowError();
+      });
+
+      test.concurrent('Now not well defined', () => {
+        const actual = {
+          type: 'atomic',
+          now: 6,
+        };
+        const received = safeAtomic(actual);
+        expect(received).toThrowError();
+      });
+
+      test.concurrent('After not well defined', () => {
+        const actual = {
+          type: 'atomic',
+          events: {
+            data: 'target',
+          },
+          after: 6,
+        };
+        const received = safeAtomic(actual);
+        expect(received).toThrowError();
+      });
+    });
   });
 
   describe.concurrent('Is Atomic', () => {
@@ -296,7 +339,13 @@ describe.concurrent('Atomic', () => {
       '"id" is the only defined property, "type" is defined to "atomic"',
       () => {
         const actual = {
+          id: 'start',
           type: 'atomic',
+          events: {
+            data: 'target',
+          },
+          now: 'now',
+          after: 'after',
         };
         const received = safeAtomic(actual);
         expect(received).not.toThrowError();
@@ -304,20 +353,19 @@ describe.concurrent('Atomic', () => {
       },
     );
 
-    test.concurrent(
-      '"id" is the only defined property, "description" is defined to undefined',
-      () => {
-        const actual = {
-          description: undefined,
-        };
-        const received = safeAtomic(actual);
-        expect(received).not.toThrowError();
-        expect(received()).toEqual(actual);
-      },
-    );
+    test.concurrent('"description" is defined to undefined', () => {
+      const actual = {
+        description: undefined,
+        events: {},
+      };
+      const received = safeAtomic(actual);
+      expect(received).not.toThrowError();
+      expect(received()).toEqual(actual);
+    });
 
     test.concurrent('"id" and "description" are defined', () => {
       const actual = {
+        id: 'id',
         description: 'A simple description',
       };
       const received = safeAtomic(actual);
@@ -325,15 +373,18 @@ describe.concurrent('Atomic', () => {
       expect(received()).toEqual(actual);
     });
 
-    test.concurrent('"children" and "initial" are defined', () => {
-      const actual = {
-        description: 'A simple description',
-        children: undefined,
-        initial: undefined,
-      };
-      const received = safeAtomic(actual);
-      expect(received).not.toThrowError();
-      expect(received()).toEqual(actual);
-    });
+    test.concurrent(
+      '"children" and "initial" are defined to "undefined"',
+      () => {
+        const actual = {
+          description: 'A simple description',
+          children: undefined,
+          initial: undefined,
+        };
+        const received = safeAtomic(actual);
+        expect(received).not.toThrowError();
+        expect(received()).toEqual(actual);
+      },
+    );
   });
 });

@@ -22,7 +22,8 @@ import { Out } from './Action';
 import { EventObject } from './Event';
 import { Guards, GuardsOption, Guards_JSON } from './Guard';
 import { Props } from './Props';
-import { Schema, State } from './State';
+import { Schema } from './Schema';
+import { State } from './State';
 import { Transition } from './Transition';
 import { BaseType } from './_default';
 

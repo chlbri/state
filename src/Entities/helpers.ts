@@ -1,8 +1,10 @@
-import type { ZodLiteral } from 'zod';
+import type { Primitive, ZodLiteral } from 'zod';
 
-export type Strings = readonly [string, string, ...string[]];
-export type Literals = [
-  ZodLiteral<string>,
-  ZodLiteral<string>,
-  ...ZodLiteral<string>[],
+export type Strings = Tarray<string>;
+
+export type Tarray<T extends Primitive> = readonly [T, T, ...T[]];
+export type ZodTarray<T extends Primitive> = [
+  ZodLiteral<T>,
+  ZodLiteral<T>,
+  ...ZodLiteral<T>[],
 ];

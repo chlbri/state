@@ -1,9 +1,10 @@
-import type { ZodType } from 'zod';
+import type { Primitive, ZodType } from 'zod';
 import z from 'zod';
 import { DEFAULT_TYPES } from '../../constants/objects';
 import { DEFAULT_STATE_DELIMITER } from '../../constants/strings';
-import type { Literals, Strings } from '../../Entities';
+import type { Tarray } from '../../Entities';
 import type { Node } from '../../Entities/Node';
+import { ZodTarray } from './../../Entities/helpers';
 import { promiseJsonSchema, subscribableJsonSchema } from './Services';
 import {
   transitionConfigAfterSchema,
@@ -12,8 +13,10 @@ import {
 } from './TranstionsConfig';
 import { baseSchema } from './_default';
 
-function createZodStringLiterals<T extends Strings>(...values: T) {
-  return z.union(values.map(value => z.literal(value)) as Literals);
+function createZodStringLiterals<T extends Primitive>(
+  ...values: Tarray<T>
+) {
+  return z.union(values.map(value => z.literal(value)) as ZodTarray<T>);
 }
 
 export function childrenIdsIncludeInitial(data: any) {
@@ -25,6 +28,10 @@ export function childrenIdsIncludeInitial(data: any) {
 const objectIsNotEmpty = (data: object) => {
   const keys = Object.keys(data);
   return keys.length > 1;
+};
+
+export const compoundNodeSchemaError = {
+  message: 'Initial must be one child',
 };
 
 const nodeCommonSchema = baseSchema
@@ -62,10 +69,6 @@ export const parallelNodeSchema = nodeCommonSchema
     children: childrenSchema,
   })
   .strict();
-
-export const compoundNodeSchemaError = {
-  message: 'Initial must be one child',
-};
 
 export const compoundNodeSchema = nodeCommonSchema
   .extend({

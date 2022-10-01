@@ -4,24 +4,12 @@ import { createError } from '../helpers/Errors';
 import { getLastDefined } from '../helpers/getLastDefined';
 import { Action } from './Action';
 import type { EventObject } from './Event';
-import { createGuard, GuardPredicate } from './Guard';
-import { createPromise, ServicePromise } from './Service';
+import { createGuard } from './Guard';
+import { Schema } from './Schema';
+import { createServicePromise } from './Service';
 import type { BaseType, DefaultTypes } from './_default';
 
 export type DefaultStateType = DefaultTypes['state'];
-
-export type Schema<
-  TC extends object = object,
-  TE extends EventObject = EventObject,
-  PTC extends object = object,
-> = {
-  guards: Record<string, GuardPredicate<TC, TE, PTC>>;
-  actions: Record<string, NOmit<Action<TC, TE, PTC>, 'id'>>;
-  promises: Record<
-    string,
-    NOmit<ServicePromise<TC, TE, PTC>, 'id' | 'libraryType'>
-  >;
-};
 
 export interface StateProps<
   TC extends object = object,
@@ -83,8 +71,8 @@ export class State<
 
   private get promises() {
     const _promises = Object.entries(this.props.promises ?? {});
-    return _promises.map(([id, promise]) => {
-      return createPromise({ ...promise, id });
+    return _promises.map(([src, promise]) => {
+      return createServicePromise({ ...promise, src });
     });
   }
 
@@ -114,7 +102,7 @@ export class State<
 
   getPromise(searchId?: string) {
     if (!searchId) throw State.ERRORS.id;
-    const promise = this.promises.find(({ id }) => id === searchId);
+    const promise = this.promises.find(({ src }) => src === searchId);
     if (!promise) throw State.ERRORS.promise;
     return promise;
   }

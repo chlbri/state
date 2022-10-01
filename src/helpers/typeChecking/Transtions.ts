@@ -9,8 +9,16 @@ export const transitionComplexSchema = z.object({
   description: z.string().optional(),
   guards: guardsJSONschema.optional(),
   in: z.union([z.string(), z.array(z.string())]).optional(),
-  actions: z.union([actionSchema, z.array(actionSchema)]),
+  actions: z
+    .union([
+      actionSchema,
+      z.array(actionSchema),
+      z.string(),
+      z.array(z.string()),
+    ])
+    .optional(),
   target: z.string().optional(),
+  event: z.string().optional(),
 });
 
 export const transitionSchema = z.union([

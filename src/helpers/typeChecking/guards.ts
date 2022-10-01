@@ -8,7 +8,9 @@ import {
   GuardsAnd_JSON,
   GuardsOr,
   GuardsOr_JSON,
+  GuardUnion,
 } from '../../Entities';
+import { isSingle } from '../SingleOrArray';
 
 export function isSimpleGuard<
   TC extends object = object,
@@ -41,7 +43,12 @@ export const guardJSONschema = z.object({
 
 const union = () => {
   return z.array(
-    z.union([guardJSONschema, guardOrJSONschema, guardAndJSONschema]),
+    z.union([
+      guardJSONschema,
+      guardOrJSONschema,
+      guardAndJSONschema,
+      z.string(),
+    ]),
   );
 };
 
@@ -60,6 +67,27 @@ export const guardAndJSONschema: z.ZodType<GuardsAnd_JSON> = z.lazy(() =>
 export const guardsJSONschema = z.union([
   guardJSONschema,
   z.array(guardJSONschema),
+  z.string(),
+  z.array(z.string()),
   guardOrJSONschema,
   guardAndJSONschema,
 ]);
+
+export function transformGuards(values: GuardUnion | GuardUnion[]) {
+  const guards: Guard[] = [];
+  if (isSingle(values)) {
+    if (typeof values === 'string') {
+      guards.push({ id: values, libraryType: DEFAULT_TYPES.guard });
+    } else if ('and' in values) {
+      values.and;
+      guards.push(...transformGuards(values.and));
+    } else if ('or' in values) {
+      guards.push(...transformGuards(values.or));
+    } else {
+      guards.push({ ...values, libraryType: DEFAULT_TYPES.guard });
+    }
+    return guards;
+  }
+  values.forEach(transformGuards);
+  return guards;
+}

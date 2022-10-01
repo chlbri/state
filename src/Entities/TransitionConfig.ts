@@ -14,9 +14,10 @@ export interface TransitionConfig extends BaseType {
   transitions: Transition[];
 }
 
-export type TransitionMap_JSON = {
-  [event: string]: SingleOrArray<TransitionExtend>;
-};
+export type TransitionMap_JSON = Record<
+  string,
+  SingleOrArray<TransitionExtend>
+>;
 
 export function createTransitionConfigs(
   props?: TransitionMap_JSON,

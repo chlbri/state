@@ -32,15 +32,25 @@ export interface ServicePromise<
   PTC extends object = object,
 > extends BaseType {
   libraryType: NExtract<ServiceType, 'state_manager.service.promise'>;
-  id: string;
+  src: string;
   timeout: number;
-  exec: AsyncFunctionEvent<TC, TE, PTC>;
-  then: Transition;
-  catch: Transition;
-  finally?: string[];
+  exec?: AsyncFunctionEvent<TC, TE, PTC>;
+  then: SingleOrArray<Transition>;
+  catch: SingleOrArray<Transition>;
+  finally?: SingleOrArray<WithString<Action_JSON>>;
 }
 
-export function createPromise<
+export interface ServiceSubscribable<TE extends EventObject = EventObject>
+  extends BaseType {
+  libraryType: NExtract<ServiceType, 'state_manager.service.subscribable'>;
+  src: string;
+  exec?: Subscribable<TE>;
+  error: SingleOrArray<Transition>;
+  next?: SingleOrArray<WithString<Action_JSON>>;
+  complete?: SingleOrArray<WithString<Action_JSON>>;
+}
+
+export function createServicePromise<
   TC extends object = object,
   TE extends EventObject = EventObject,
   PTC extends object = object,
@@ -50,16 +60,27 @@ export function createPromise<
   return { ...props, libraryType: 'state_manager.service.promise' };
 }
 
+export function createServiceSubscribable<
+  TE extends EventObject = EventObject,
+>(
+  props: NOmit<ServiceSubscribable<TE>, 'libraryType'>,
+): ServiceSubscribable<TE> {
+  return { ...props, libraryType: 'state_manager.service.subscribable' };
+}
+
 export type ServicePromise_JSON = {
   src: string;
+  timeout: number;
   description?: string;
   then: SingleOrArray<TransitionExtend>;
   catch: SingleOrArray<TransitionExtend>;
-  finally?: SingleOrArray<Action_JSON>;
+  finally?: SingleOrArray<WithString<Action_JSON>>;
 };
 
-export type Subscribable_JSON = WithString<{
+export type Subscribable_JSON = {
   src: string;
   description?: string;
-  complete?: SingleOrArray<Action_JSON>;
-}>;
+  complete?: SingleOrArray<WithString<Action_JSON>>;
+  next?: SingleOrArray<WithString<Action_JSON>>;
+  error: SingleOrArray<TransitionExtend>;
+};
