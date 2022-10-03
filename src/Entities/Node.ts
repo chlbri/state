@@ -1,7 +1,7 @@
 import { NExtract } from '@bemedev/core';
+import { ActionDelay } from './Action';
+import { EventObject } from './Event';
 import { ServicePromise_JSON, Subscribable_JSON } from './Service';
-import { TransitionExtend } from './Transition';
-import { TransitionMap_JSON } from './TransitionConfig';
 import { DefaultTypes, SingleOrArray } from './_default';
 
 export type DefaultNodeType = DefaultTypes['node'];
@@ -9,49 +9,50 @@ export type DefaultNodeType = DefaultTypes['node'];
 type JSONTypes = DefaultTypes['node']['types']['array'][number];
 type TyE<K extends JSONTypes> = NExtract<JSONTypes, K>;
 
-export type ParallelNode = {
+export type Transition<
+  TC extends object = object,
+  TE extends EventObject = EventObject,
+  PTC extends object = object,
+> = {
+  description?: string | undefined;
+  event?: string | undefined;
+  target?: string | undefined;
+  in: string[];
+  actions: string[];
+  guards: string[];
+  delay?: ActionDelay<TC, TE, PTC>;
+};
+
+export type Extend<T> = string | T | (string | T)[];
+
+type Common = {
   parentId?: string;
   id?: string;
   description?: string;
+
+  promises?: Record<string, ServicePromise_JSON>;
+  subscribables?: Record<string, Subscribable_JSON>;
+  events?: Record<string, Extend<Transition>>;
+  now?: SingleOrArray<Extend<Transition>>;
+  after?: SingleOrArray<Extend<Transition>>;
+};
+
+export type ParallelNode = Common & {
   type: TyE<'parallel'>;
   initial?: undefined;
   children: Record<string, Node>;
-  delimiter?: string;
-  promises?: SingleOrArray<ServicePromise_JSON>;
-  subscribables?: SingleOrArray<Subscribable_JSON>;
-  events?: TransitionMap_JSON;
-  now?: SingleOrArray<TransitionExtend>;
-  after?: SingleOrArray<TransitionExtend>;
 };
 
-export type CompoundNode = {
-  parentId?: string;
-  id?: string;
-  description?: string;
+export type CompoundNode = Common & {
   type?: TyE<'compound'>;
   initial: string;
   children: Record<string, Node>;
-  delimiter?: string;
-  promises?: SingleOrArray<ServicePromise_JSON>;
-  subscribables?: SingleOrArray<Subscribable_JSON>;
-  events?: TransitionMap_JSON;
-  now?: SingleOrArray<TransitionExtend>;
-  after?: SingleOrArray<TransitionExtend>;
 };
 
-export type AtomicNode = {
-  parentId?: string;
-  id?: string;
-  description?: string;
+export type AtomicNode = Common & {
   type?: TyE<'atomic'>;
   initial?: undefined;
   children?: undefined;
-  delimiter?: string;
-  promises?: SingleOrArray<ServicePromise_JSON>;
-  subscribables?: SingleOrArray<Subscribable_JSON>;
-  events?: TransitionMap_JSON;
-  now?: SingleOrArray<TransitionExtend>;
-  after?: SingleOrArray<TransitionExtend>;
 };
 
 export type Node = ParallelNode | CompoundNode | AtomicNode;

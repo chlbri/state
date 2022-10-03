@@ -1,4 +1,5 @@
 import { NOmit } from '@bemedev/core';
+import z from 'zod';
 import { DEFAULT_TYPES } from '../constants/objects';
 import type { EventObject } from './Event';
 import type { Props } from './Props';
@@ -8,6 +9,45 @@ import type {
   SingleOrArray,
   WithString,
 } from './_default';
+
+export const guardJSONschema = z
+  .object({
+    id: z.string(),
+    description: z.string().optional(),
+  })
+  .strict();
+
+export const unionGuard = () => {
+  return z.array(
+    z.union([
+      guardJSONschema,
+      guardOrJSONschema,
+      guardAndJSONschema,
+      z.string(),
+    ]),
+  );
+};
+
+export const guardOrJSONschema: z.ZodType<GuardsOr_JSON> = z.lazy(() =>
+  z.object({
+    or: unionGuard(),
+  }),
+);
+
+export const guardAndJSONschema: z.ZodType<GuardsAnd_JSON> = z.lazy(() =>
+  z.object({
+    and: unionGuard(),
+  }),
+);
+
+export const guardsJSONschema = z.union([
+  guardJSONschema,
+  unionGuard(),
+  z.string(),
+  guardOrJSONschema,
+  guardAndJSONschema,
+  z.undefined(),
+]);
 
 export type GuardPredicate<
   TC extends object = object,

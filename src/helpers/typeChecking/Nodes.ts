@@ -2,8 +2,8 @@ import type { Primitive, ZodType } from 'zod';
 import z from 'zod';
 import { DEFAULT_TYPES } from '../../constants/objects';
 import { DEFAULT_STATE_DELIMITER } from '../../constants/strings';
+import { Node_JSON } from '../../create/json';
 import type { Tarray } from '../../Entities';
-import type { Node } from '../../Entities/Node';
 import { ZodTarray } from './../../Entities/helpers';
 import { promiseJsonSchema, subscribableJsonSchema } from './Services';
 import {
@@ -42,19 +42,15 @@ const nodeCommonSchema = baseSchema
     delimiter: z.string().default(DEFAULT_STATE_DELIMITER).optional(),
     type: createZodStringLiterals(...DEFAULT_TYPES.node.types.array),
     initial: z.string().optional(),
-    promises: z
-      .union([promiseJsonSchema, z.array(promiseJsonSchema)])
-      .optional(),
-    subscribables: z
-      .union([subscribableJsonSchema, z.array(subscribableJsonSchema)])
-      .optional(),
+    promises: z.record(promiseJsonSchema).optional(),
+    subscribables: z.record(subscribableJsonSchema).optional(),
     events: transitionConfigEventSchema.optional(),
     now: transitionConfigNowSchema.optional(),
     after: transitionConfigAfterSchema.optional(),
   })
   .strict();
 
-export const nodeSchema: ZodType<Node> = z.lazy(() =>
+export const nodeSchema: ZodType<Node_JSON> = z.lazy(() =>
   z.union([parallelNodeSchema, compoundNodeSchema, atomicNodeSchema]),
 );
 

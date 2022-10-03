@@ -9,12 +9,15 @@ import {
   WithString,
 } from '../Entities';
 import { actionComplexSchema } from '../helpers';
-import { Action_JSON } from './../Entities/Action';
+import { Action_JSON } from '../Entities/Action';
 import { collectTransitions } from './transitions';
 
-export function collectActions(
-  values: SingleOrArray<WithString<Action_JSON>>,
-) {
+export function collectActions<
+  TC extends object = object,
+  TE extends EventObject = EventObject,
+  PTC extends object = object,
+>(values?: SingleOrArray<WithString<Action_JSON>>) {
+  if (!values) return [];
   return z
     .union([
       actionComplexSchema.transform(values => [
@@ -38,7 +41,7 @@ export function collectActions(
           ids.map(id => ({ id, libraryType: DEFAULT_TYPES.action })),
         ),
     ])
-    .parse(values);
+    .parse(values) as Action<TC, TE, PTC>[];
 }
 
 export function assignActions<

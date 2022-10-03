@@ -73,8 +73,13 @@ export const guardsJSONschema = z.union([
   guardAndJSONschema,
 ]);
 
-export function transformGuards(values: GuardUnion | GuardUnion[]) {
-  const guards: Guard[] = [];
+export function transformGuards<
+  TC extends object = object,
+  TE extends EventObject = EventObject,
+  PTC extends object = object,
+>(values?: GuardUnion | GuardUnion[]) {
+  const guards: Guard<TC, TE, PTC>[] = [];
+  if (!values) return guards;
   if (isSingle(values)) {
     if (typeof values === 'string') {
       guards.push({ id: values, libraryType: DEFAULT_TYPES.guard });
@@ -88,6 +93,8 @@ export function transformGuards(values: GuardUnion | GuardUnion[]) {
     }
     return guards;
   }
-  values.forEach(transformGuards);
+  values.forEach(value => {
+    guards.push(...transformGuards(value));
+  });
   return guards;
 }

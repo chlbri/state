@@ -1,5 +1,5 @@
 import { NOmit } from '@bemedev/core';
-import { Action, ActionFunction } from './Action';
+import { Action, ActionDelay, ActionFunction } from './Action';
 import { EventObject } from './Event';
 import { AsyncFunctionEvent } from './Function';
 import { GuardPredicate } from './Guard';
@@ -26,8 +26,6 @@ export type Definitions<
   guards?: Record<string, GuardPredicate<TC, TE, PTC>>;
   actions?: Record<string, ActionFunction<TC, TE, PTC>>;
   promises?: Record<string, AsyncFunctionEvent<TC, TE, PTC>>;
-  subcribables?: Record<
-    string,
-    Subscribable<TE> | { sub: Subscribable<any>; map: (value: any) => TE }
-  >;
+  subcribables?: Record<string, Subscribable<TE>>;
+  delays?: Record<string, ActionDelay<TC, TE, PTC>>;
 };

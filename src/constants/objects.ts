@@ -26,7 +26,19 @@ export const DEFAULT_TYPES = {
       array: ['parallel', 'atomic', 'compound'],
     },
   },
-  transition: 'state_manager.transition',
+  transition: {
+    type: 'state_manager.transition',
+    object: {
+      event: 'state_manager.transition.event',
+      now: 'state_manager.transition.now',
+      after: 'state_manager.transition.after',
+    },
+    array: [
+      'state_manager.transition.event',
+      'state_manager.transition.now',
+      'state_manager.transition.after',
+    ],
+  },
   transitionConfig: {
     type: 'state_manager.transition_config',
     options: {

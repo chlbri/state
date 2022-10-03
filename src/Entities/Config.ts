@@ -6,5 +6,6 @@ export type Config<
   PTC extends object = object,
 > = {
   context: TC;
-  privateCOntext: PTC;
+  privateContext: PTC;
+  delimiter?: string;
 } & NExclude<Node, AtomicNode>;

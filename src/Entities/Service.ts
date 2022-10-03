@@ -22,6 +22,8 @@ export interface Subscription {
   unsubscribe(): void;
 }
 
+
+
 export interface Subscribable<T> {
   subscribe(observer: Observer<T>): Subscription;
 }
@@ -35,9 +37,9 @@ export interface ServicePromise<
   src: string;
   timeout: number;
   exec?: AsyncFunctionEvent<TC, TE, PTC>;
-  then: SingleOrArray<Transition>;
-  catch: SingleOrArray<Transition>;
-  finally?: SingleOrArray<WithString<Action_JSON>>;
+  then: Transition[];
+  catch: Transition[];
+  finally: string[];
 }
 
 export interface ServiceSubscribable<TE extends EventObject = EventObject>
@@ -45,9 +47,9 @@ export interface ServiceSubscribable<TE extends EventObject = EventObject>
   libraryType: NExtract<ServiceType, 'state_manager.service.subscribable'>;
   src: string;
   exec?: Subscribable<TE>;
-  error: SingleOrArray<Transition>;
-  next?: SingleOrArray<WithString<Action_JSON>>;
-  complete?: SingleOrArray<WithString<Action_JSON>>;
+  error: Transition[];
+  next: string[];
+  complete: string[];
 }
 
 export function createServicePromise<
@@ -69,7 +71,6 @@ export function createServiceSubscribable<
 }
 
 export type ServicePromise_JSON = {
-  src: string;
   timeout: number;
   description?: string;
   then: SingleOrArray<TransitionExtend>;
@@ -78,7 +79,6 @@ export type ServicePromise_JSON = {
 };
 
 export type Subscribable_JSON = {
-  src: string;
   description?: string;
   complete?: SingleOrArray<WithString<Action_JSON>>;
   next?: SingleOrArray<WithString<Action_JSON>>;
