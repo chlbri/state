@@ -1,13 +1,4 @@
-import { NExtract, NOmit } from '@bemedev/core';
-import { DEFAULT_TYPES } from '../constants/objects';
-
-export type SingleOrArray<T> = T[] | T;
-export type Extend<T> = SingleOrArray<string | T>;
-export type DefaultTypes = typeof DEFAULT_TYPES;
-export interface BaseType {
-  description?: string;
-  libraryType: string;
-}
+import { BaseType, DefaultTypes, NExtract, NOmit } from './_default';
 
 export type EventType = `${DefaultTypes['event']}.${
   | 'emit'
@@ -49,5 +40,3 @@ export type EventObject<D = any> =
 export type Event<TE extends EventEmit> =
   | TE['event']
   | NOmit<TE, 'libraryType' | 'description'>;
-
-export type NodeTypes = DefaultTypes['node']['types']['array'][number];

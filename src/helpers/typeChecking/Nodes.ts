@@ -2,7 +2,7 @@ import type { Primitive, ZodType } from 'zod';
 import z from 'zod';
 import { DEFAULT_TYPES } from '../../constants/objects';
 import { DEFAULT_STATE_DELIMITER } from '../../constants/strings';
-import { Node_JSON } from '../../create/json';
+import { Node_JSON } from '../../create/types/json/node';
 import type { Tarray } from '../../Entities';
 import { ZodTarray } from './../../Entities/helpers';
 import { promiseJsonSchema, subscribableJsonSchema } from './Services';

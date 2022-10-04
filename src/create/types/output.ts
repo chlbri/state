@@ -1,5 +1,6 @@
 import type { NExtract, NOmit } from '@bemedev/core';
-import { BaseType, DefaultTypes, EventObject } from './default';
+import { EventObject } from './event';
+import { BaseType, DefaultTypes } from './_default';
 
 export type Out<TC extends object, PTC extends object> = {
   context?: TC;
@@ -20,6 +21,32 @@ export type ActionFunction<
   TE extends EventObject,
   PTC extends object = object,
 > = FunctionEvent<TC, TE, PTC, Out<TC, PTC>>;
+
+export interface Action<
+  TC extends object = object,
+  TE extends EventObject = EventObject,
+  PTC extends object = object,
+> extends BaseType {
+  id: string;
+  libraryType: DefaultTypes['action'];
+  exec?: ActionFunction<TC, TE, PTC>;
+}
+
+export type GuardPredicate<
+  TC extends object = object,
+  TE extends EventObject = EventObject,
+  PTC extends object = object,
+> = (props?: Props<TC, TE, PTC>) => boolean;
+
+export interface Guard<
+  TC extends object = object,
+  TE extends EventObject = EventObject,
+  PTC extends object = object,
+> extends BaseType {
+  libraryType: DefaultTypes['guard'];
+  id: string;
+  predicate?: GuardPredicate<TC, TE, PTC>;
+}
 
 export interface Action<
   TC extends object = object,
@@ -110,7 +137,7 @@ export type AsyncFunctionEvent<
   R = any,
 > = FunctionEvent<TC, TE, PTC, Promise<R>>;
 
-export type Node<
+export type MachineNode<
   TC extends object = object,
   TE extends EventObject = EventObject,
   PTC extends object = object,
@@ -125,5 +152,17 @@ export type Node<
   now: Transition<TC, TE, PTC>[];
   after: Transition<TC, TE, PTC>[];
   initial?: string;
-  children?: Record<string, NOmit<Node<TC, TE, PTC>, 'id'>>;
+  children?: Record<string, NOmit<MachineNode<TC, TE, PTC>, 'id'>>;
+};
+
+export type Definitions<
+  TC extends object = object,
+  TE extends EventObject = EventObject,
+  PTC extends object = object,
+> = {
+  guards?: Record<string, GuardPredicate<TC, TE, PTC>>;
+  actions?: Record<string, ActionFunction<TC, TE, PTC>>;
+  promises?: Record<string, AsyncFunctionEvent<TC, TE, PTC>>;
+  subcribables?: Record<string, Subscribable<TE>>;
+  delays?: Record<string, ActionDelay<TC, TE, PTC>>;
 };
