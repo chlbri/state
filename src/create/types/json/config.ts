@@ -2,10 +2,12 @@ import { NExclude } from '@bemedev/core';
 import { z } from 'zod';
 import { AtomicNode_JSON, Node_JSON } from './node';
 
-export const config_JSON = z.object({
-  context: z.object({}),
-  privateContext: z.object({}).optional(),
-});
+export const config_JSON = z
+  .object({
+    context: z.object({}).passthrough(),
+    privateContext: z.object({}).passthrough().optional(),
+  })
+  .strict();
 
 export type Config_JSON<
   TC extends object = object,
