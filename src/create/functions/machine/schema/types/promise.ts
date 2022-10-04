@@ -15,7 +15,7 @@ export type PromiseProp<
       z.ZodString,
       z.ZodObject<
         {
-          timeout: z.ZodNumber;
+          timeout: z.ZodOptional<z.ZodNumber>;
           description: z.ZodOptional<z.ZodString>;
           then: z.ZodUnion<
             [
@@ -243,7 +243,7 @@ export type PromiseProp<
           description?: string | undefined;
           then: Transition<TC, TE, PTC>[];
           catch: Transition<TC, TE, PTC>[];
-          timeout: number;
+          timeout?: number;
           finally: string[];
         },
         {
@@ -283,7 +283,7 @@ export type PromiseProp<
                 in?: string | string[] | undefined;
                 target?: string | undefined;
               }[];
-          timeout: number;
+          timeout?: number;
         }
       >
     >
@@ -328,7 +328,7 @@ export type PromiseProp<
               in?: string | string[] | undefined;
               target?: string | undefined;
             }[];
-        timeout: number;
+        timeout?: number;
       }
     >
   | undefined

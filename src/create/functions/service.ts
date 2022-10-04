@@ -14,7 +14,7 @@ export function createPromises<
   PTC extends object = object,
 >(props: CreateTransitionProps<TC, TE, PTC>) {
   const _schema = z.object({
-    timeout: z.number(),
+    timeout: z.number().optional(),
     description: z.string().optional(),
     then: createTransition<TC, TE, PTC>(props),
     catch: createTransition<TC, TE, PTC>(props),

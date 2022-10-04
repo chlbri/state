@@ -106,7 +106,7 @@ export interface ServicePromise<
 > extends BaseType {
   libraryType: NExtract<ServiceType, 'state_manager.service.promise'>;
   src: string;
-  timeout: number;
+  timeout?: number;
   exec?: AsyncFunctionEvent<TC, TE, PTC, R>;
   then: Transition[];
   catch: Transition[];
@@ -164,5 +164,5 @@ export type Definitions<
   actions?: Record<string, ActionFunction<TC, TE, PTC>>;
   promises?: Record<string, AsyncFunctionEvent<TC, TE, PTC>>;
   subcribables?: Record<string, Subscribable<TE>>;
-  delays?: Record<string, ActionDelay<TC, TE, PTC>>;
+  durations?: Record<string, ActionDelay<TC, TE, PTC>>;
 };

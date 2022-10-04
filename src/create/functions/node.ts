@@ -18,9 +18,8 @@ export function transformNode<
   TC extends object = object,
   TE extends EventObject = EventObject,
   PTC extends object = object,
->(node?: any, id: string = DEFAULT_STATE_DELIMITER, parentID?: string) {
+>(node: any, id: string = DEFAULT_STATE_DELIMITER, parentID?: string) {
   const nodes: MachineNode<TC, TE, PTC>[] = [];
-  if (!node) return nodes;
 
   nodes.push({
     ...node,

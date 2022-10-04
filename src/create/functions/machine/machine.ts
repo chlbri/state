@@ -1,7 +1,7 @@
 import { Config_JSON, Definitions, EventObject } from '../../types';
 import { transformNode } from '../node';
-import { createSchema } from './createSchema';
 import { prepareMachine } from './prepare';
+import { createSchema } from './schema';
 
 export function createMachine<
   TC extends object = object,
@@ -43,7 +43,14 @@ export function createMachine<
     subscribables,
   } as const;
 }
+// TODO: type EventExtend
+// TODO: mergeTransitons (from child to ancestors)
+// TODO: mergePromises (from child to ancestors)
+// TODO: mergeSubscribables (from child to ancestors)
+// TODO: add interval (only actions) : {delay? =0, interval? =defaultInterval, actions:string[] }
+// TODO: add settings : { priority :{ high?: array<string>, low?: array<string>, medium (default)?: array<string> }, immediates: array<string>, promiseTimeout?: number, interval?: number }
 
+//For test
 const create = createMachine(
   {
     children: {

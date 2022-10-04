@@ -3,7 +3,7 @@ import { Action_JSON } from './action';
 import { Transition_JSON } from './transition';
 
 export type ServicePromise_JSON = {
-  timeout: number;
+  timeout?: number;
   description?: string;
   then: Extend<Transition_JSON>;
   catch: Extend<Transition_JSON>;

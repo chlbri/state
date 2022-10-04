@@ -8,5 +8,5 @@ export function createDelay<
 >(delay: string, definitions?: Definitions<TC, TE, PTC>) {
   return isNumber(delay)
     ? () => Number.parseInt(delay)
-    : definitions?.delays?.[delay];
+    : definitions?.durations?.[delay];
 }
