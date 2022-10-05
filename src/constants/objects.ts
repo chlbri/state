@@ -2,6 +2,7 @@ export const DEFAULT_TYPES = {
   action: 'state_manager.action',
   event: 'state_manager.event',
   guard: 'state_manager.guard',
+  duration: 'state_manager.duration',
   service: {
     type: 'state_manager.service',
     object: {

@@ -1,4 +1,4 @@
-import { EventEmit } from '../Entities';
+import { EventEmit } from '../types';
 
 export function compareEvents<T extends EventEmit>(
   first: T,
