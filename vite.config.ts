@@ -1,5 +1,5 @@
 // vite.config.ts
-import path from 'path';
+import { resolve } from 'path';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -8,10 +8,10 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@-constants': path.resolve(__dirname, './src/constants'),
-      '@-helpers': path.resolve(__dirname, './src/helpers'),
-      '@-types': path.resolve(__dirname, './src/types'),
-      '@-functions': path.resolve(__dirname, './src/functions'),
+      '@-constants': resolve(__dirname, './src/constants'),
+      '@-helpers': resolve(__dirname, './src/helpers'),
+      '@-types': resolve(__dirname, './src/types'),
+      '@-functions': resolve(__dirname, './src/functions'),
     },
   },
 });
