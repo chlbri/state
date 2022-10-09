@@ -1,5 +1,5 @@
+import { NUMBERS } from '@-constants';
 import { z } from 'zod';
-import { MAXIMUM_DELAY, MINIMUM_INTERVAL } from '../constants/numbers';
 import { EventObject, Interval, NOmit } from '../types';
 import { addRemainActions } from './transition';
 import { CreateTransitionProps } from './_default';
@@ -41,7 +41,7 @@ export function createIntervals<
 
   const delay = durationTransform
     .refine(value => {
-      if (typeof value === 'number') return value <= MAXIMUM_DELAY;
+      if (typeof value === 'number') return value <= NUMBERS.MAXIMUM_DELAY;
       return true;
     })
     .optional();
@@ -68,7 +68,8 @@ export function createIntervals<
   }
 
   const key = durationTransform.refine(value => {
-    if (typeof value === 'number') return value >= MINIMUM_INTERVAL;
+    if (typeof value === 'number')
+      return value >= NUMBERS.MINIMUM_INTERVAL;
     return true;
   });
 

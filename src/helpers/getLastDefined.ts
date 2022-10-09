@@ -1,4 +1,4 @@
-import { ERRORS } from '../constants';
+import { ERRORS } from '@-constants';
 
 export function getLastDefined<T>(...values: [...(T | undefined)[], T]) {
   const len = values.length - 1;

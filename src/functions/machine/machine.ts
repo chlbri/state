@@ -1,10 +1,10 @@
-import { z } from 'zod';
-import {
+import type {
   Config_JSON,
   Definitions,
   EventObject,
   Settings,
-} from '../../types';
+} from '@-types';
+import { z } from 'zod';
 import { transformNode } from '../node';
 import { prepareMachine } from './prepare';
 import { createSchema } from './schema';

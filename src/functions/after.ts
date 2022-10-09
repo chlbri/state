@@ -1,6 +1,6 @@
+import { NUMBERS } from '@-constants';
+import { Transition } from '@-types';
 import { z } from 'zod';
-import { MAXIMUM_DELAY } from '../constants/numbers';
-import { Transition } from '../types';
 
 function mapper(object?: Record<string | number, Transition[]>) {
   const out: Transition[] = [];
@@ -28,7 +28,7 @@ export function createAfter(
     .record(
       delaySchema.refine(value => {
         if (typeof value === 'number')
-          return value > 0 && value <= MAXIMUM_DELAY;
+          return value > 0 && value <= NUMBERS.MAXIMUM_DELAY;
         return true;
       }),
       schema,

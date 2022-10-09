@@ -1,5 +1,5 @@
+import { NOmit, Transition } from '@-types';
 import { z } from 'zod';
-import { NOmit, Transition } from '../types';
 
 export function createEvents(
   schema: z.ZodType<NOmit<Transition, 'event'>[], z.ZodTypeDef, any>,

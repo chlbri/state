@@ -1,11 +1,7 @@
+import { OBJECTS } from '@-constants';
+import { getExecutable } from '@-helpers';
+import { EventObject, ServicePromise, ServiceSubscribable } from '@-types';
 import { z } from 'zod';
-import { DEFAULT_TYPES } from '../constants/objects';
-import { getExecutable } from '../helpers';
-import {
-  EventObject,
-  ServicePromise,
-  ServiceSubscribable,
-} from '../types';
 import { createTransition } from './transition';
 import { CreateTransitionProps } from './_default';
 
@@ -39,7 +35,7 @@ export function createPromises<
         const promiseToPush: ServicePromise<TC, TE, PTC> = {
           ...promise,
           src,
-          libraryType: DEFAULT_TYPES.service.object.promise,
+          libraryType: OBJECTS.DEFAULT_TYPES.service.object.promise,
           exec: getExecutable(props.definitions?.promises?.[src]),
         };
 
@@ -72,7 +68,7 @@ export function createSubscribables<
         const subscribableToPush = {
           ...subscribable,
           src,
-          libraryType: DEFAULT_TYPES.service.object.subscribable,
+          libraryType: OBJECTS.DEFAULT_TYPES.service.object.subscribable,
           exec: getExecutable(props.definitions?.subcribables?.[src]),
         };
 

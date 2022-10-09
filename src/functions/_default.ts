@@ -1,6 +1,5 @@
-import z from 'zod';
-import { Action, EventObject } from '../types';
-import { Definitions } from '../types/definitions';
+import type { Action, Definitions, EventObject } from '@-types';
+import type z from 'zod';
 
 export type CreateTransitionProps<
   TC extends object = object,

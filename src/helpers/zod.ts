@@ -1,5 +1,5 @@
+import type { Tarray, ZodTarray } from '@-types';
 import z from 'zod';
-import { Tarray, ZodTarray } from '../types';
 
 export function createZodStringLiterals<T extends z.Primitive>(
   ...values: Tarray<T>

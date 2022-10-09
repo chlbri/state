@@ -1,5 +1,4 @@
-import { Subscribable } from '../types';
-import { ExecutableWithDescription } from './../types/definitions';
+import type { ExecutableWithDescription, Subscribable } from '@-types';
 
 export function executableHasDescription<
   Executable extends ((...args: any[]) => any) | Subscribable,

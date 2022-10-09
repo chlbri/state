@@ -1,2 +1,3 @@
-export const toArray = <T>(data?: T) =>
-  data ? [data] : ([] as Exclude<T, undefined>[]);
+export function toArray<T>(data?: T) {
+  return data ? [data] : ([] as Exclude<T, undefined>[]);
+}

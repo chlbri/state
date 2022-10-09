@@ -1,9 +1,5 @@
+import { EventObject, ServicePromise, Transition } from '@-types';
 import type { z } from 'zod';
-import {
-  EventObject,
-  ServicePromise,
-  Transition,
-} from '../../../../types';
 
 export type PromiseProp<
   TC extends object = object,
@@ -17,10 +13,7 @@ export type PromiseProp<
         {
           timeout: z.ZodOptional<
             z.ZodUnion<
-              [
-                z.ZodNumber,
-                z.ZodEffects<z.ZodString, string, string>,
-              ]
+              [z.ZodNumber, z.ZodEffects<z.ZodString, string, string>]
             >
           >;
           description: z.ZodOptional<z.ZodString>;

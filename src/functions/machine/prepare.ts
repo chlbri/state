@@ -1,6 +1,5 @@
+import { Definitions, EventObject, MachineNode } from '@-types';
 import { NOmit } from '@bemedev/core';
-import { EventObject, MachineNode } from '../../types';
-import { Definitions } from '../../types/definitions';
 import { createAction } from '../action';
 import { createDuration } from '../duration';
 import { createGuard } from '../guard';

@@ -1,7 +1,7 @@
+import { OBJECTS } from '@-constants';
+import { getExecutableWithDescription } from '@-helpers';
+import { Definitions, Duration, EventObject } from '@-types';
 import { z } from 'zod';
-import { DEFAULT_TYPES } from '../constants/objects';
-import { getExecutableWithDescription } from '../helpers';
-import { Definitions, Duration, EventObject } from '../types';
 
 type DurationProps<
   TC extends object = object,
@@ -27,7 +27,7 @@ export function transformDuration<
   return {
     src,
     description,
-    libraryType: DEFAULT_TYPES.duration,
+    libraryType: OBJECTS.DEFAULT_TYPES.duration,
     ...rest,
   };
 }

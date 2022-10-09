@@ -1,9 +1,9 @@
-import type { z } from 'zod';
 import type {
   EventObject,
   ServiceSubscribable,
   Transition,
-} from '../../../../types';
+} from '@-types';
+import type { z } from 'zod';
 
 export type SubscribableProp<TE extends EventObject = EventObject> =
   z.ZodEffects<

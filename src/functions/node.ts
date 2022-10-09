@@ -1,5 +1,5 @@
-import { DEFAULT_STATE_DELIMITER } from '../constants/strings';
-import { EventObject, MachineNode } from '../types';
+import { STRINGS } from '@-constants';
+import { EventObject, MachineNode } from '@-types';
 
 export const compoundNodeLengthError = {
   message: 'Initial must be one child',
@@ -7,10 +7,10 @@ export const compoundNodeLengthError = {
 
 export function generateChildID(
   id: string,
-  parentID: string = DEFAULT_STATE_DELIMITER,
+  parentID: string = STRINGS.DEFAULT_STATE_DELIMITER,
 ) {
   return `${parentID}${
-    parentID === DEFAULT_STATE_DELIMITER ? '' : '/'
+    parentID === STRINGS.DEFAULT_STATE_DELIMITER ? '' : '/'
   }${id}`;
 }
 
@@ -18,7 +18,7 @@ export function transformNode<
   TC extends object = object,
   TE extends EventObject = EventObject,
   PTC extends object = object,
->(node: any, id: string = DEFAULT_STATE_DELIMITER, parentID?: string) {
+>(node: any, id: string = STRINGS.DEFAULT_STATE_DELIMITER, parentID?: string) {
   const nodes: MachineNode<TC, TE, PTC>[] = [];
 
   nodes.push({

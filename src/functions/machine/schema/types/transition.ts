@@ -1,5 +1,5 @@
+import type { Transition } from '@-types';
 import type { z } from 'zod';
-import type { Transition } from '../../../../types';
 
 export type TransitionProp = z.ZodUnion<
   [

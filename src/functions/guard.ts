@@ -1,12 +1,12 @@
-import { DEFAULT_TYPES } from '../constants/objects';
-import { getExecutableWithDescription, isSingle } from '../helpers';
+import { OBJECTS } from '@-constants';
+import { getExecutableWithDescription, isSingle } from '@-helpers';
 import {
   Definitions,
   EventObject,
   Guard,
   GuardUnion,
   JSONschema,
-} from '../types';
+} from '@-types';
 
 export function transformGuards<
   TC extends object = object,
@@ -17,14 +17,17 @@ export function transformGuards<
   if (!values) return guards;
   if (isSingle(values)) {
     if (typeof values === 'string') {
-      guards.push({ src: values, libraryType: DEFAULT_TYPES.guard });
+      guards.push({
+        src: values,
+        libraryType: OBJECTS.DEFAULT_TYPES.guard,
+      });
     } else if ('and' in values) {
       values.and;
       guards.push(...transformGuards(values.and));
     } else if ('or' in values) {
       guards.push(...transformGuards(values.or));
     } else {
-      guards.push({ ...values, libraryType: DEFAULT_TYPES.guard });
+      guards.push({ ...values, libraryType: OBJECTS.DEFAULT_TYPES.guard });
     }
     return guards;
   }

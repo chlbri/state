@@ -1,5 +1,5 @@
+import { OBJECTS } from '@-constants';
 import { z } from 'zod';
-import { DEFAULT_TYPES } from '../constants/objects';
 import { toArray } from '../helpers';
 import { toIdentity } from '../helpers/identity';
 import {
@@ -42,7 +42,7 @@ export function addRemainActions<
   remainActions.push(
     ...actions.map(src => ({
       src,
-      libraryType: DEFAULT_TYPES.action,
+      libraryType: OBJECTS.DEFAULT_TYPES.action,
       predicate: definitions?.[src],
     })),
   );

@@ -1,7 +1,7 @@
+import { OBJECTS } from '@-constants';
+import { getExecutableWithDescription, toArray } from '@-helpers';
+import { Action, Definitions, EventObject, JSONschema } from '@-types';
 import z from 'zod';
-import { DEFAULT_TYPES } from '../constants/objects';
-import { getExecutableWithDescription, toArray } from '../helpers';
-import { Action, Definitions, EventObject, JSONschema } from '../types';
 
 export function createAction<
   TC extends object = object,
@@ -13,7 +13,7 @@ export function createAction<
     const rest = getExecutableWithDescription(definitions?.actions?.[src]);
     const action = {
       src,
-      libraryType: DEFAULT_TYPES.action,
+      libraryType: OBJECTS.DEFAULT_TYPES.action,
       ...rest,
     };
     actions.push(action);
@@ -26,7 +26,7 @@ export function createAction<
     );
     const action = {
       ...values,
-      libraryType: DEFAULT_TYPES.action,
+      libraryType: OBJECTS.DEFAULT_TYPES.action,
       ...rest,
     };
     actions.push(action);

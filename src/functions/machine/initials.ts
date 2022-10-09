@@ -1,4 +1,4 @@
-import { Config_JSON, config_JSON } from '../../types';
+import { Config_JSON, config_JSON } from '@-types';
 
 export function createInitials<
   TC extends object = object,

@@ -1,4 +1,4 @@
-import { MachineNode } from '../types';
+import type { MachineNode } from '@-types';
 
 export function getNode(target: string, ...states: MachineNode[]) {
   const find = states.find(state => state.id === target);
