@@ -6,7 +6,7 @@ import {
 } from '@-helpers';
 import { NOmit } from '@bemedev/core';
 import { z } from 'zod';
-import { EventObject, MachineNode, Node_JSON } from '../../../types';
+import { EventObject, NodeOutput, Node_JSON } from '../../../types';
 
 import { createAfter } from '../../after';
 import { createEvents } from '../../events';
@@ -44,7 +44,7 @@ export function createSchema<
   intervalTransform,
 }: Props<TC, TE, PTC>) {
   const nodeSchema: z.ZodType<
-    NOmit<MachineNode<TC, TE, PTC>, 'id'>,
+    NOmit<NodeOutput<TC, TE, PTC>, 'id'>,
     z.ZodTypeDef,
     Node_JSON
   > = z.lazy(() =>

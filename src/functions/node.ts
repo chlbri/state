@@ -1,5 +1,5 @@
 import { STRINGS } from '@-constants';
-import { EventObject, MachineNode } from '@-types';
+import { EventObject, NodeOutput } from '@-types';
 
 export const compoundNodeLengthError = {
   message: 'Initial must be one child',
@@ -18,8 +18,12 @@ export function transformNode<
   TC extends object = object,
   TE extends EventObject = EventObject,
   PTC extends object = object,
->(node: any, id: string = STRINGS.DEFAULT_STATE_DELIMITER, parentID?: string) {
-  const nodes: MachineNode<TC, TE, PTC>[] = [];
+>(
+  node: any,
+  id: string = STRINGS.DEFAULT_STATE_DELIMITER,
+  parentID?: string,
+) {
+  const nodes: NodeOutput<TC, TE, PTC>[] = [];
 
   nodes.push({
     ...node,

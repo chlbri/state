@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@bemedev/core': ^0.0.2
+  '@bemedev/decompose': ^0.1.6
   '@types/lodash.clonedeep': ^4.5.7
   '@typescript-eslint/eslint-plugin': ^5.38.1
   '@typescript-eslint/parser': ^5.38.1
@@ -25,6 +26,7 @@ specifiers:
 
 dependencies:
   '@bemedev/core': 0.0.2
+  '@bemedev/decompose': 0.1.6
   lodash.clonedeep: 4.5.0
   zod: 3.19.1
 
@@ -77,6 +79,11 @@ packages:
     dependencies:
       dequal: 2.0.3
       nanoid: 4.0.0
+    dev: false
+
+  /@bemedev/decompose/0.1.6:
+    resolution: {integrity: sha512-l2hxdLELzOQNEzdic5kwN3issGGbAGDI84qvUIGy4+LZES8sARYoklBSUay5x0rn4ZogsmlNdYHSZ4w9IRhZOQ==}
+    engines: {node: '>=12'}
     dev: false
 
   /@blakeembrey/deque/1.0.5:

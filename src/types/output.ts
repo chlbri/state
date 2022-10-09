@@ -148,13 +148,13 @@ export type Interval = {
   guards: string[];
 };
 
-export type MachineNode<
+export type NodeOutput<
   TC extends object = object,
   TE extends EventObject = EventObject,
   PTC extends object = object,
 > = {
   parentID?: string;
-  type: string;
+  type: DefaultTypes['node']['types']['array'][number];
   id: string;
   description?: string;
   promises: NOmit<ServicePromise<TC, TE, PTC>, 'exec'>[];
@@ -164,5 +164,15 @@ export type MachineNode<
   now: Transition[];
   after: Transition[];
   initial?: string;
-  children?: Record<string, NOmit<MachineNode<TC, TE, PTC>, 'id'>>;
+  children?: Record<
+    string,
+    NOmit<NodeOutput<TC, TE, PTC>, 'id'> & { id?: string }
+  >;
 };
+
+export type NodeWithChildren<
+  TC extends object = object,
+  TE extends EventObject = EventObject,
+  PTC extends object = object,
+> = NodeOutput<TC, TE, PTC> &
+  Required<Pick<NodeOutput<TC, TE, PTC>, 'children'>>;

@@ -1,5 +1,4 @@
-import { Definitions, EventObject, MachineNode } from '@-types';
-import { NOmit } from '@bemedev/core';
+import { Definitions, EventObject, NodeOutput } from '@-types';
 import { createAction } from '../action';
 import { createDuration } from '../duration';
 import { createGuard } from '../guard';
@@ -13,8 +12,8 @@ export function prepareMachine<
   TE extends EventObject = EventObject,
   PTC extends object = object,
 >(value: any, definitions?: Definitions<TC, TE, PTC>) {
-  const initials = createInitials(value);
-  const nodes: NOmit<MachineNode<TC, TE, PTC>, 'id'>[] = [];
+  const initials = createInitials<TC, PTC>(value);
+  const nodes: NodeOutput<TC, TE, PTC>[] = [];
 
   const [durations, durationTransform] = createDuration(
     definitions?.durations,

@@ -71,8 +71,7 @@ export function createMachine<
 // TODO: mergeTransitons (from child to ancestors)
 // TODO: mergePromises (from child to ancestors)
 // TODO: mergeSubscribables (from child to ancestors)
-
-// TODO: add settings : { priority :{ high?: array<string>, low?: array<string>, medium (default)?: array<string> }, immediates: array<string>, promiseTimeout?: number, interval?: number }
+// TODO: Attribute value
 
 //For test
 const create = createMachine({
