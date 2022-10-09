@@ -19,13 +19,13 @@ export interface EventData<Data = any> extends _EventObject {
 export interface EventError extends _EventObject {
   libraryType: NExtract<EventType, 'state_manager.event.catch'>;
   event: NExtract<EventType, 'state_manager.event.catch'>;
-  error: Error;
+  data: Error;
 }
 
 export interface EventEmit<Payload = any> extends _EventObject {
   libraryType: NExtract<EventType, 'state_manager.event.emit'>;
   event: string;
-  payload: Payload;
+  data: Payload;
 }
 
 export type ExtenalEvent<TE extends EventObject> = TE extends EventEmit
@@ -41,7 +41,7 @@ export type Event<TE extends EventEmit> =
   | TE['event']
   | NOmit<TE, 'libraryType' | 'description'>;
 
-export type EventExtend<Payload = any, Data = any> =
-  | EventEmit<Payload>
+export type EventExtend<Data = any> =
+  | EventEmit<Data>
   | EventData<Data>
   | EventError;

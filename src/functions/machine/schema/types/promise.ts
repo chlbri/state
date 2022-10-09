@@ -1,4 +1,4 @@
-import { EventObject, ServicePromise, Transition } from '@-types';
+import type { EventObject, ServicePromise, Transition } from '@-types';
 import type { z } from 'zod';
 
 export type PromiseProp<
