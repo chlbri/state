@@ -68,10 +68,7 @@ export function createMachine<
     durations,
   } as const;
 }
-// TODO: mergeTransitons (from child to ancestors)
-// TODO: mergePromises (from child to ancestors)
-// TODO: mergeSubscribables (from child to ancestors)
-// TODO: Attribute value
+
 
 //For test
 const create = createMachine({
